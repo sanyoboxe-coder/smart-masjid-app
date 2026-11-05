@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة تسيير المسجد الذكي</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, sans-serif; }
+    body { background: #0f172a; color: #f8fafc; padding: 15px; }
+    .header { text-align: center; margin-bottom: 20px; padding: 10px; border-bottom: 1px solid #334155; }
+    .header h2 { color: #38bdf8; font-size: 1.4rem; }
+    .card { background: #1e293b; border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #334155; }
+    .card-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    label { display: block; font-size: 0.9rem; margin-bottom: 5px; color: #94a3b8; }
+    input, select, textarea {
+      width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #475569;
+      background: #0f172a; color: #fff; font-size: 1rem; margin-bottom: 12px; outline: none;
+    }
+    input:focus, textarea:focus { border-color: #38bdf8; }
+    .btn {
+      width: 100%; padding: 14px; border: none; border-radius: 8px;
+      font-size: 1.1rem; font-weight: bold; cursor: pointer; background: #16a34a; color: #fff;
+    }
+    .toggle-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h2>🕌 إدارة المسجد الذكي</h2>
+    <p style="font-size: 0.85rem; color: #94a3b8;">التحكم السريع في شاشة التلفاز</p>
+  </div>
+
+  <div class="card">
+    <label>اسم المسجد والمدينة:</label>
+    <input type="text" id="masjidTitle" value="🕌 مسجد أبي هريرة - القنيطرة">
+    <label>رابط صورة الخلفية (اتركه فارغاً للخلفية الافتراضية):</label>
+    <input type="text" id="bgImage" placeholder="رابط مباشر لصورة المسجد">
+  </div>
+
+  <!-- صلاة الجنازة -->
+  <div class="card" style="border-top: 4px solid #ef4444;">
+    <div class="card-title" style="color: #f87171;">⚰️ إعلان صلاة الجنازة</div>
+    <div class="toggle-row">
+      <span>تفعيل الإعلان على الشاشة:</span>
+      <input type="checkbox" id="janazaActive" style="width: 22px; height: 22px; margin: 0;">
+    </div>
+    <label>اسم المتوفى أو الوصف:</label>
+    <input type="text" id="janazaName" placeholder="مثال: المرحوم فلان بن فلان">
+    <label>موعد الصلاة:</label>
+    <select id="janazaTime">
+      <option value="بعد صلاة الظهر">بعد صلاة الظهر</option>
+      <option value="بعد صلاة العصر">بعد صلاة العصر</option>
+      <option value="بعد صلاة المغرب">بعد صلاة المغرب</option>
+      <option value="بعد صلاة العشاء">بعد صلاة العشاء</option>
+      <option value="بعد صلاة الجمعة">بعد صلاة الجمعة</option>
+    </select>
+  </div>
+
+  <!-- درس اليوم -->
+  <div class="card" style="border-top: 4px solid #38bdf8;">
+    <div class="card-title" style="color: #38bdf8;">📖 درس المسجد والمواعظ</div>
+    <div class="toggle-row">
+      <span>تفعيل إعلان الدرس:</span>
+      <input type="checkbox" id="lessonActive" style="width: 22px; height: 22px; margin: 0;">
+    </div>
+    <label>عنوان الدرس:</label>
+    <input type="text" id="lessonTitle" placeholder="مثال: شرح كتاب رياض الصالحين">
+    <label>المحاضر / الشيخ:</label>
+    <input type="text" id="lessonLecturer" placeholder="مثال: فضيلة الشيخ الدكتور...">
+    <label>الموعد:</label>
+    <input type="text" id="lessonTime" placeholder="مثال: بين المغرب والعشاء">
+  </div>
+
+  <!-- دقائق الإقامة -->
+  <div class="card" style="border-top: 4px solid #10b981;">
+    <div class="card-title" style="color: #34d399;">⏱️ دقائق انتظار الإقامة</div>
+    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; text-align: center;">
+      <div><label>الفجر</label><input type="number" id="iqFajr" value="20"></div>
+      <div><label>الظهر</label><input type="number" id="iqDhuhr" value="15"></div>
+      <div><label>العصر</label><input type="number" id="iqAsr" value="15"></div>
+      <div><label>المغرب</label><input type="number" id="iqMaghrib" value="10"></div>
+      <div><label>العشاء</label><input type="number" id="iqIsha" value="15"></div>
+    </div>
+  </div>
+
+  <!-- شريط الأخبار -->
+  <div class="card">
+    <label>نص الشريط المتحرك في الأسفل:</label>
+    <textarea id="footerText" rows="2">مرحباً بكم في نظام إدارة المسجد الذكي • تقبل الله منا ومنكم صالح الأعمال</textarea>
+  </div>
+
+  <button class="btn" onclick="saveData()">💾 حفظ وتطبيق الإعدادات (JSON)</button>
+
+  <div id="outputSec" style="display:none; margin-top: 15px;">
+    <label style="color: #38bdf8; font-weight: bold;">انسخ هذا النص وضعه في ملف config.json:</label>
+    <textarea id="jsonRes" rows="8" readonly onclick="this.select()"></textarea>
+  </div>
+
+  <script>
+    function saveData() {
+      var cfg = {
+        masjidTitle: document.getElementById('masjidTitle').value,
+        bgImage: document.getElementById('bgImage').value,
+        footerText: document.getElementById('footerText').value,
+        delays: {
+          Fajr: parseInt(document.getElementById('iqFajr').value) || 20,
+          Dhuhr: parseInt(document.getElementById('iqDhuhr').value) || 15,
+          Asr: parseInt(document.getElementById('iqAsr').value) || 15,
+          Maghrib: parseInt(document.getElementById('iqMaghrib').value) || 10,
+          Isha: parseInt(document.getElementById('iqIsha').value) || 15
+        },
+        janaza: {
+          active: document.getElementById('janazaActive').checked,
+          name: document.getElementById('janazaName').value,
+          time: document.getElementById('janazaTime').value
+        },
+        lesson: {
+          active: document.getElementById('lessonActive').checked,
+          title: document.getElementById('lessonTitle').value,
+          lecturer: document.getElementById('lessonLecturer').value,
+          time: document.getElementById('lessonTime').value
+        }
+      };
+      document.getElementById('jsonRes').value = JSON.stringify(cfg, null, 2);
+      document.getElementById('outputSec').style.display = 'block';
+      alert('تم توليد كود التحديث بنجاح! انسخه وضعه في config.json');
+    }
+  </script>
+</body>
+</html>
