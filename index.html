@@ -24,7 +24,7 @@
     body.theme-emerald { background: radial-gradient(circle at center, #064e3b 0%, #022c22 70%, #01140e 100%); }
     body.theme-charcoal { background: radial-gradient(circle at center, #1e293b 0%, #0f172a 70%, #020617 100%); }
 
-    /* الإعدادات والتخصيص */
+    /* النوافذ العائمة */
     .setup-overlay {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       background: rgba(2, 6, 23, 0.98); z-index: 100000;
@@ -58,9 +58,15 @@
       display: flex; justify-content: space-between; align-items: center; 
       font-size: 1.25rem; font-weight: 700; border: 1px solid rgba(255,255,255,0.1);
     }
+    .top-tools { display: flex; align-items: center; gap: 12px; }
+    .btn-qr-pair {
+      background: #0284c7; color: #fff; border: none; padding: 6px 14px; border-radius: 8px;
+      font-size: 0.95rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px;
+    }
+    .btn-qr-pair.locked { background: #334155; color: #94a3b8; }
     .settings-trigger { cursor: pointer; opacity: 0.8; font-size: 1.3rem; }
 
-    /* القسم الأوسط والساعة والتواريخ */
+    /* القسم الأوسط */
     .center-section { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 0 10px; }
     .side-box { 
       text-align: center; min-width: 155px; background: rgba(15, 23, 42, 0.75); 
@@ -121,7 +127,7 @@
     }
     @keyframes marquee { 0% { transform: translate3d(0,0,0); } 100% { transform: translate3d(-100%,0,0); } }
 
-    /* شاشات الإقامة والتنبيه المترجمة */
+    /* الشاشات الكبرى */
     .fullscreen-modal {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       background: rgba(2, 6, 23, 0.97); z-index: 99999; display: none;
@@ -137,6 +143,26 @@
   </style>
 </head>
 <body class="theme-navy">
+
+  <!-- نافذة الباركود للربط الحصري بهاتف الإمام -->
+  <div class="setup-overlay" id="qrPairModal">
+    <div class="setup-box" style="text-align: center; max-width: 480px;">
+      <div class="setup-title" id="qrTitle">📱 ربط هاتف الإمام الحصري</div>
+      <p id="qrDesc" style="color: #94a3b8; font-size: 1rem; margin-bottom: 15px;">
+        امسح هذا الرمز بكاميرا هاتفك لتصبح المسؤول المعتمد الوحيد لهذا المسجد:
+      </p>
+      
+      <div id="qrContainer" style="background: #fff; padding: 15px; border-radius: 16px; display: inline-block; margin-bottom: 15px;">
+        <img id="qrImg" src="" alt="QR Pairing" style="width: 220px; height: 220px; display: block;">
+      </div>
+
+      <div id="pairStatusInfo" style="font-size: 0.95rem; color: #38bdf8; margin-bottom: 15px;">
+        🔐 الرمز مخصص لهذا المسجد فقط وسيتم قفل النظام فور اكتمال الربط
+      </div>
+
+      <button type="button" class="btn-act btn-gps" onclick="document.getElementById('qrPairModal').style.display='none'">إغلاق</button>
+    </div>
+  </div>
 
   <!-- نافذة التخصيص الكاملة -->
   <div class="setup-overlay" id="setupModal">
@@ -155,7 +181,7 @@
 
       <div class="setup-row">
         <div style="flex:1;">
-          <label class="setup-label">تعديل التاريخ الهجري (أيام):</label>
+          <label class="setup-label">تعديل التاريخ الهجري:</label>
           <select id="cfgHijriOffset" class="setup-select">
             <option value="-2">-2 يوم</option>
             <option value="-1">-1 يوم</option>
@@ -202,12 +228,19 @@
         </div>
       </div>
 
+      <!-- قسم إدارة أمان الربط -->
+      <div style="margin-top: 15px; padding: 12px; background: rgba(239,68,68,0.1); border-radius: 10px; border: 1px solid #ef4444;">
+        <div style="color: #f87171; font-weight: bold; font-size: 0.95rem; margin-bottom: 5px;">🔒 أمان هاتف الإمام المعتمد:</div>
+        <p style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 8px;">إذا غيّر الإمام هاتفه، اضغط هنا لإلغاء القفل والسماح بربط هاتف جديد.</p>
+        <button type="button" class="btn-del" style="width: 100%; padding: 10px;" onclick="resetAdminPairing()">إعادة ضبط الربط وفتح الباركود لهاتف جديد</button>
+      </div>
+
       <button type="button" class="btn-act btn-gps" onclick="fetchGPS()">📡 تحديد الإحداثيات تلقائياً عبر GPS</button>
       <button type="button" class="btn-act btn-save" onclick="saveMosqueConfig()">💾 حفظ وبدء التشغيل</button>
     </div>
   </div>
 
-  <!-- الشاشة الكبرى للتنبيه والإقامة المزدوجة -->
+  <!-- الشاشة الكبرى للإقامة والتنبيه المترجم -->
   <div class="fullscreen-modal" id="fsModal">
     <div class="modal-head" id="fsHead">إِقَامَةُ الصَّلَاةِ</div>
     <div class="modal-head-sub" id="fsHeadSub">IQAMA PRAYER</div>
@@ -221,7 +254,8 @@
   <!-- الشريط العلوي -->
   <div class="top-bar">
     <div id="dispMasjidTitle">🕌 مسجد النور الذكي</div>
-    <div style="display: flex; align-items: center; gap: 15px;">
+    <div class="top-tools">
+      <button type="button" class="btn-qr-pair" id="btnPairDevice" onclick="openPairingModal()">📱 هاتف الإمام</button>
       <div id="dispCityBadge" style="color: #38bdf8;">📍 جاري الضبط...</div>
       <div class="settings-trigger" onclick="openSetupModal()" title="إعدادات الشاشة">⚙️</div>
     </div>
@@ -267,48 +301,49 @@
   <script>
     var TRANSLATIONS = {
       ar: {
-        locale: 'ar-MA',
-        fajr: "", dhuhr: "", asr: "", maghrib: "", isha: "", sunrise: "الشروق", jumua: "الجمعة",
+        locale: 'ar-MA', fajr: "", dhuhr: "", asr: "", maghrib: "", isha: "", sunrise: "الشروق", jumua: "الجمعة",
         iqamaTitle: "إِقَامَةُ الصَّلَاةِ", iqamaSub: "",
         alignRows: "اسْتَوُوا وَاعْتَدِلُوا، وَأَقِيمُوا صُفُوفَكُمْ", alignRowsSub: "",
         silencePhone: "📴 يُرْجَى إِغْلَاقُ الْهَوَاتِفِ النَّقَّالَةِ جَزَاكُمُ اللهُ خَيْرًا", silencePhoneSub: ""
       },
       fr: {
-        locale: 'fr-FR',
-        fajr: "Fajr", dhuhr: "Dhuhr", asr: "Asr", maghrib: "Maghrib", isha: "Isha", sunrise: "Chourouk", jumua: "Joumou'a",
+        locale: 'fr-FR', fajr: "Fajr", dhuhr: "Dhuhr", asr: "Asr", maghrib: "Maghrib", isha: "Isha", sunrise: "Chourouk", jumua: "Joumou'a",
         iqamaTitle: "إِقَامَةُ الصَّلَاةِ", iqamaSub: "Iqama - Appel à la prière",
         alignRows: "اسْتَوُوا وَاعْتَدِلُوا، وَتَرَاصُّوا فِي الصُّفُوفِ", alignRowsSub: "Alignez-vous et resserrez les rangs",
         silencePhone: "📴 يُرْجَى إِغْلَاقُ الْهَوَاتِفِ النَّقَّالَةِ جَزَاكُمُ اللهُ خَيْرًا", silencePhoneSub: "Veuillez éteindre vos téléphones portables"
       },
       en: {
-        locale: 'en-US',
-        fajr: "Fajr", dhuhr: "Dhuhr", asr: "Asr", maghrib: "Maghrib", isha: "Isha", sunrise: "Sunrise", jumua: "Jumuah",
+        locale: 'en-US', fajr: "Fajr", dhuhr: "Dhuhr", asr: "Asr", maghrib: "Maghrib", isha: "Isha", sunrise: "Sunrise", jumua: "Jumuah",
         iqamaTitle: "إِقَامَةُ الصَّلَاةِ", iqamaSub: "Iqama - Prayer starts",
         alignRows: "اسْتَوُوا وَاعْتَدِلُوا، وَتَرَاصُّوا فِي الصُّفُوفِ", alignRowsSub: "Straighten and close up the rows",
         silencePhone: "📴 يُرْجَى إِغْلَاقُ الْهَوَاتِفِ النَّقَّالَةِ جَزَاكُمُ اللهُ خَيْرًا", silencePhoneSub: "Please turn off your mobile phones"
       },
       es: {
-        locale: 'es-ES',
-        fajr: "Fáyr", dhuhr: "Duhr", asr: "Asr", maghrib: "Mágrib", isha: "Isha", sunrise: "Amanecer", jumua: "Yumu'ah",
+        locale: 'es-ES', fajr: "Fáyr", dhuhr: "Duhr", asr: "Asr", maghrib: "Mágrib", isha: "Isha", sunrise: "Amanecer", jumua: "Yumu'ah",
         iqamaTitle: "إِقَامَةُ الصَّلَاةِ", iqamaSub: "Iqama - Inicio del rezo",
         alignRows: "اسْتَوُوا وَاعْتَدِلُوا", alignRowsSub: "Alineen y enderecen las filas",
         silencePhone: "📴 يُرْجَى إِغْلَاقُ الْهَوَاتِفِ النَّقَّالَةِ", silencePhoneSub: "Por favor apaguen sus teléfonos móviles"
       },
       tr: {
-        locale: 'tr-TR',
-        fajr: "İmsak", dhuhr: "Öğle", asr: "İkindi", maghrib: "Akşam", isha: "Yatsı", sunrise: "Güneş", jumua: "Cuma",
+        locale: 'tr-TR', fajr: "İmsak", dhuhr: "Öğle", asr: "İkindi", maghrib: "Akşam", isha: "Yatsı", sunrise: "Güneş", jumua: "Cuma",
         iqamaTitle: "KAMET", iqamaSub: "Namaz Başlıyor",
         alignRows: "اسْتَوُوا وَاعْتَدِلُوا", alignRowsSub: "Safları düzeltiniz ve sıklaştırınız",
         silencePhone: "📴 يُرْجَى إِغْلَاقُ الْهَوَاتِفِ", silencePhoneSub: "Lütfen cep telefonlarınızı kapatınız"
       },
       de: {
-        locale: 'de-DE',
-        fajr: "Fadschr", dhuhr: "Dhuhr", asr: "Asr", maghrib: "Maghrib", isha: "Ischa", sunrise: "Sonnenaufgang", jumua: "Dschumu'a",
+        locale: 'de-DE', fajr: "Fadschr", dhuhr: "Dhuhr", asr: "Asr", maghrib: "Maghrib", isha: "Ischa", sunrise: "Sonnenaufgang", jumua: "Dschumu'a",
         iqamaTitle: "IQAMA", iqamaSub: "Gebet beginnt",
         alignRows: "اسْتَوُوا وَاعْتَدِلُوا", alignRowsSub: "Reihen schließen und ausrichten",
         silencePhone: "📴 يُرْجَى إِغْلَاقُ الْهَوَاتِفِ", silencePhoneSub: "Bitte schalten Sie Ihre Mobiltelefone aus"
       }
     };
+
+    // توليد مفتاح أمان للمسجد لأول مرة
+    if (!localStorage.getItem('sm_pairing_token')) {
+      var randToken = 'KEY_' + Math.random().toString(36).substring(2, 10).toUpperCase() + Date.now().toString(36).toUpperCase();
+      localStorage.setItem('sm_pairing_token', randToken);
+      localStorage.setItem('sm_is_paired', 'false');
+    }
 
     var mConfig = {
       name: localStorage.getItem('sm_name') || "مسجد النور الذكي",
@@ -318,7 +353,9 @@
       lat: parseFloat(localStorage.getItem('sm_lat')) || 34.2610,
       lng: parseFloat(localStorage.getItem('sm_lng')) || -6.5802,
       theme: localStorage.getItem('sm_theme') || "theme-navy",
-      customBg: localStorage.getItem('sm_bg') || ""
+      customBg: localStorage.getItem('sm_bg') || "",
+      pairingToken: localStorage.getItem('sm_pairing_token'),
+      isPaired: localStorage.getItem('sm_is_paired') === 'true'
     };
 
     var delays = { Fajr: 20, Dhuhr: 15, Asr: 15, Maghrib: 10, Isha: 15 };
@@ -332,7 +369,61 @@
     ];
     var dhikrIdx = 0;
 
-    // دالة التاريخ الهجري الدقيق
+    // نافذة الربط الحصري بالباركود
+    function openPairingModal() {
+      var pBtn = document.getElementById('btnPairDevice');
+      var qrModal = document.getElementById('qrPairModal');
+      var qrImg = document.getElementById('qrImg');
+      var qrTitle = document.getElementById('qrTitle');
+      var qrDesc = document.getElementById('qrDesc');
+      var pInfo = document.getElementById('pairStatusInfo');
+
+      if (mConfig.isPaired) {
+        qrTitle.innerText = "🔒 الشاشة مقفلة ومربوطة";
+        qrDesc.innerText = "هذا المسجد مربوط بالفعل بهاتف المسؤول المعتمد الوحيد.";
+        qrContainer.style.display = "none";
+        pInfo.innerHTML = "❌ لا يمكن لأي شخص آخر مسح الكود أو التحكم في الشاشة.<br>إذا أردت ربط هاتف جديد، يرجى الدخول إلى ⚙️ الإعدادات والضغط على (إعادة ضبط الربط).";
+      } else {
+        qrTitle.innerText = "📱 ربط هاتف الإمام الحصري";
+        qrDesc.innerText = "امسح هذا الرمز بكاميرا هاتفك لتصبح المسؤول المعتمد الوحيد لهذا المسجد:";
+        qrContainer.style.display = "inline-block";
+        pInfo.innerHTML = "🔐 عند مسح هذا الرمز، سيتم قفل التحكم وحصره على هاتفك فقط!";
+
+        // توليد رابط لوحة التحكم مع كود الأمان المشفر
+        var currentUrl = window.location.href.split('index.html')[0].split('#')[0].split('?')[0];
+        if (!currentUrl.endsWith('/')) currentUrl += '/';
+        var adminTarget = currentUrl + 'admin.html?token=' + encodeURIComponent(mConfig.pairingToken);
+        
+        qrImg.src = "https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=" + encodeURIComponent(adminTarget);
+      }
+      qrModal.style.display = 'flex';
+    }
+
+    function checkPairingStatusUI() {
+      var pBtn = document.getElementById('btnPairDevice');
+      if (mConfig.isPaired) {
+        pBtn.className = "btn-qr-pair locked";
+        pBtn.innerText = "🔒 هاتف الإمام (مربوط)";
+      } else {
+        pBtn.className = "btn-qr-pair";
+        pBtn.innerText = "📱 ربط هاتف الإمام";
+      }
+    }
+
+    function resetAdminPairing() {
+      if (confirm('هل أنت متأكد من إلغاء قفل هاتف الإمام الحالي والسماح بربط هاتف جديد؟')) {
+        var newToken = 'KEY_' + Math.random().toString(36).substring(2, 10).toUpperCase() + Date.now().toString(36).toUpperCase();
+        localStorage.setItem('sm_pairing_token', newToken);
+        localStorage.setItem('sm_is_paired', 'false');
+        mConfig.pairingToken = newToken;
+        mConfig.isPaired = false;
+        checkPairingStatusUI();
+        document.getElementById('setupModal').style.display = 'none';
+        alert('تمت إعادة ضبط الربط بنجاح! يمكنك الآن مسح الباركود بهاتف جديد.');
+      }
+    }
+
+    // التاريخ الهجري والميلادي
     function getHijriDate(offsetDays) {
       var d = new Date();
       d.setDate(d.getDate() + offsetDays);
@@ -340,12 +431,9 @@
         var options = { day: 'numeric', month: 'long', year: 'numeric' };
         var hijriFormatter = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura', options);
         return hijriFormatter.format(d) + ' هـ';
-      } catch (e) {
-        return "";
-      }
+      } catch (e) { return ""; }
     }
 
-    // دالة التاريخ الميلادي حسب اللغة
     function getGregorianDate(langKey) {
       var d = new Date();
       var t = TRANSLATIONS[langKey] || TRANSLATIONS.ar;
@@ -353,9 +441,7 @@
         var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         var gregFormatter = new Intl.DateTimeFormat(t.locale, options);
         return gregFormatter.format(d);
-      } catch (e) {
-        return d.toLocaleDateString();
-      }
+      } catch (e) { return d.toLocaleDateString(); }
     }
 
     function applyVisualTheme() {
@@ -560,7 +646,6 @@
       document.getElementById('liveClock').innerText = 
         (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
 
-      // تحديث التاريخين (الهجري والميلادي حسب اللغة)
       document.getElementById('liveHijriDate').innerText = getHijriDate(mConfig.hijriOffset);
       document.getElementById('liveGregDate').innerText = getGregorianDate(mConfig.lang);
 
@@ -650,6 +735,7 @@
     applyHeaderInfo();
     applyLanguageTexts();
     recalcAstronomicalTimes();
+    checkPairingStatusUI();
     setInterval(tick, 1000);
     tick();
 
