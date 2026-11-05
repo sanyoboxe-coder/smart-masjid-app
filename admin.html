@@ -21,88 +21,175 @@
       width: 100%; padding: 14px; border: none; border-radius: 8px;
       font-size: 1.1rem; font-weight: bold; cursor: pointer; background: #16a34a; color: #fff;
     }
+    .btn-upload {
+      background: #0284c7; color: #fff; padding: 10px 15px; border: none; border-radius: 8px;
+      font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 10px;
+    }
+    .btn-remove {
+      background: #b91c1c; color: #fff; padding: 8px 12px; border: none; border-radius: 6px;
+      cursor: pointer; font-size: 0.85rem; display: none; width: 100%;
+    }
     .toggle-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    #blockScreen { display: none; text-align: center; padding: 30px 15px; margin-top: 40px; }
+    .block-card { background: rgba(239, 68, 68, 0.15); border: 2px solid #ef4444; border-radius: 16px; padding: 25px; }
+    .preview-box { text-align: center; margin: 10px 0; }
+    .preview-box img { max-width: 100%; max-height: 180px; border-radius: 8px; border: 1px solid #475569; display: none; }
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <h2>🕌 إدارة المسجد الذكي</h2>
-    <p style="font-size: 0.85rem; color: #94a3b8;">التحكم السريع في شاشة التلفاز</p>
-  </div>
-
-  <div class="card">
-    <label>اسم المسجد والمدينة:</label>
-    <input type="text" id="masjidTitle" value="🕌 مسجد أبي هريرة - القنيطرة">
-    <label>رابط صورة الخلفية (اتركه فارغاً للخلفية الافتراضية):</label>
-    <input type="text" id="bgImage" placeholder="رابط مباشر لصورة المسجد">
-  </div>
-
-  <!-- صلاة الجنازة -->
-  <div class="card" style="border-top: 4px solid #ef4444;">
-    <div class="card-title" style="color: #f87171;">⚰️ إعلان صلاة الجنازة</div>
-    <div class="toggle-row">
-      <span>تفعيل الإعلان على الشاشة:</span>
-      <input type="checkbox" id="janazaActive" style="width: 22px; height: 22px; margin: 0;">
-    </div>
-    <label>اسم المتوفى أو الوصف:</label>
-    <input type="text" id="janazaName" placeholder="مثال: المرحوم فلان بن فلان">
-    <label>موعد الصلاة:</label>
-    <select id="janazaTime">
-      <option value="بعد صلاة الظهر">بعد صلاة الظهر</option>
-      <option value="بعد صلاة العصر">بعد صلاة العصر</option>
-      <option value="بعد صلاة المغرب">بعد صلاة المغرب</option>
-      <option value="بعد صلاة العشاء">بعد صلاة العشاء</option>
-      <option value="بعد صلاة الجمعة">بعد صلاة الجمعة</option>
-    </select>
-  </div>
-
-  <!-- درس اليوم -->
-  <div class="card" style="border-top: 4px solid #38bdf8;">
-    <div class="card-title" style="color: #38bdf8;">📖 درس المسجد والمواعظ</div>
-    <div class="toggle-row">
-      <span>تفعيل إعلان الدرس:</span>
-      <input type="checkbox" id="lessonActive" style="width: 22px; height: 22px; margin: 0;">
-    </div>
-    <label>عنوان الدرس:</label>
-    <input type="text" id="lessonTitle" placeholder="مثال: شرح كتاب رياض الصالحين">
-    <label>المحاضر / الشيخ:</label>
-    <input type="text" id="lessonLecturer" placeholder="مثال: فضيلة الشيخ الدكتور...">
-    <label>الموعد:</label>
-    <input type="text" id="lessonTime" placeholder="مثال: بين المغرب والعشاء">
-  </div>
-
-  <!-- دقائق الإقامة -->
-  <div class="card" style="border-top: 4px solid #10b981;">
-    <div class="card-title" style="color: #34d399;">⏱️ دقائق انتظار الإقامة</div>
-    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; text-align: center;">
-      <div><label>الفجر</label><input type="number" id="iqFajr" value="20"></div>
-      <div><label>الظهر</label><input type="number" id="iqDhuhr" value="15"></div>
-      <div><label>العصر</label><input type="number" id="iqAsr" value="15"></div>
-      <div><label>المغرب</label><input type="number" id="iqMaghrib" value="10"></div>
-      <div><label>العشاء</label><input type="number" id="iqIsha" value="15"></div>
+  <div id="blockScreen">
+    <div class="block-card">
+      <div style="font-size: 3.5rem; margin-bottom: 10px;">🚫</div>
+      <h2 style="color: #f87171; margin-bottom: 12px;">غير مصرح بالدخول</h2>
+      <p style="color: #cbd5e1; font-size: 1rem; line-height: 1.6; margin-bottom: 15px;">
+        هذا المسجد محمي ومربوط مسبقاً بهاتف المسؤول المعتمد الوحيد.
+      </p>
+      <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.5;">
+        إذا كنت تريد ربط هذا الهاتف، يرجى التوجه إلى شاشة التلفاز والدخول إلى <b>⚙️ الإعدادات</b> ثم الضغط على <b>(إعادة ضبط الربط)</b> لإعادة مسح الباركود.
+      </p>
     </div>
   </div>
 
-  <!-- شريط الأخبار -->
-  <div class="card">
-    <label>نص الشريط المتحرك في الأسفل:</label>
-    <textarea id="footerText" rows="2">مرحباً بكم في نظام إدارة المسجد الذكي • تقبل الله منا ومنكم صالح الأعمال</textarea>
-  </div>
+  <div id="adminPanel">
+    <div class="header">
+      <h2>🕌 إدارة المسجد الذكي</h2>
+      <p style="font-size: 0.85rem; color: #34d399; font-weight: bold; margin-top: 4px;">✅ تم التحقق: أنت المسؤول المعتمد لهذا المسجد</p>
+    </div>
 
-  <button class="btn" onclick="saveData()">💾 حفظ وتطبيق الإعدادات (JSON)</button>
+    <!-- بطاقة صورة المسجد من الهاتف -->
+    <div class="card" style="border-top: 4px solid #38bdf8;">
+      <div class="card-title" style="color: #38bdf8;">🖼️ صورة خلفية المسجد</div>
+      <label>اختر صورة من ألبوم هاتفك لعرضها خلفيةً في التلفاز:</label>
+      <input type="file" id="phoneImageInput" accept="image/*" style="display: none;" onchange="previewImage(event)">
+      <button type="button" class="btn-upload" onclick="document.getElementById('phoneImageInput').click()">📁 اختيار صورة من الهاتف</button>
+      
+      <div class="preview-box">
+        <img id="imgPreview" alt="معاينة الصورة">
+      </div>
+      <button type="button" id="btnDelImg" class="btn-remove" onclick="clearImage()">حذف الصورة والعودة للخلفية العادية</button>
+    </div>
 
-  <div id="outputSec" style="display:none; margin-top: 15px;">
-    <label style="color: #38bdf8; font-weight: bold;">انسخ هذا النص وضعه في ملف config.json:</label>
-    <textarea id="jsonRes" rows="8" readonly onclick="this.select()"></textarea>
+    <div class="card">
+      <label>اسم المسجد:</label>
+      <input type="text" id="masjidTitle" value="مسجد النور الذكي">
+    </div>
+
+    <!-- صلاة الجنازة -->
+    <div class="card" style="border-top: 4px solid #ef4444;">
+      <div class="card-title" style="color: #f87171;">⚰️ إعلان صلاة الجنازة</div>
+      <div class="toggle-row">
+        <span>تفعيل الإعلان على الشاشة:</span>
+        <input type="checkbox" id="janazaActive" style="width: 22px; height: 22px; margin: 0;">
+      </div>
+      <label>اسم المتوفى أو الوصف:</label>
+      <input type="text" id="janazaName" placeholder="مثال: المرحوم فلان بن فلان">
+      <label>موعد الصلاة:</label>
+      <select id="janazaTime">
+        <option value="بعد صلاة الظهر">بعد صلاة الظهر</option>
+        <option value="بعد صلاة العصر">بعد صلاة العصر</option>
+        <option value="بعد صلاة المغرب">بعد صلاة المغرب</option>
+        <option value="بعد صلاة العشاء">بعد صلاة العشاء</option>
+        <option value="بعد صلاة الجمعة">بعد صلاة الجمعة</option>
+      </select>
+    </div>
+
+    <!-- درس اليوم -->
+    <div class="card" style="border-top: 4px solid #38bdf8;">
+      <div class="card-title" style="color: #38bdf8;">📖 درس المسجد والمواعظ</div>
+      <div class="toggle-row">
+        <span>تفعيل إعلان الدرس:</span>
+        <input type="checkbox" id="lessonActive" style="width: 22px; height: 22px; margin: 0;">
+      </div>
+      <label>عنوان الدرس:</label>
+      <input type="text" id="lessonTitle" placeholder="مثال: شرح صحيح البخاري">
+      <label>المحاضر / الشيخ:</label>
+      <input type="text" id="lessonLecturer" placeholder="مثال: فضيلة الشيخ...">
+      <label>الموعد:</label>
+      <input type="text" id="lessonTime" placeholder="مثال: بين المغرب والعشاء">
+    </div>
+
+    <!-- دقائق الإقامة -->
+    <div class="card" style="border-top: 4px solid #10b981;">
+      <div class="card-title" style="color: #34d399;">⏱️ دقائق انتظار الإقامة</div>
+      <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; text-align: center;">
+        <div><label>الفجر</label><input type="number" id="iqFajr" value="20"></div>
+        <div><label>الظهر</label><input type="number" id="iqDhuhr" value="15"></div>
+        <div><label>العصر</label><input type="number" id="iqAsr" value="15"></div>
+        <div><label>المغرب</label><input type="number" id="iqMaghrib" value="10"></div>
+        <div><label>العشاء</label><input type="number" id="iqIsha" value="15"></div>
+      </div>
+    </div>
+
+    <!-- شريط الأخبار -->
+    <div class="card">
+      <label>نص الشريط المتحرك في الأسفل:</label>
+      <textarea id="footerText" rows="2">مرحباً بكم في نظام إدارة المسجد الذكي • تقبل الله منا ومنكم صالح الأعمال</textarea>
+    </div>
+
+    <button class="btn" onclick="saveData()">💾 حفظ وتحديث الشاشة</button>
   </div>
 
   <script>
+    var urlParams = new URLSearchParams(window.location.search);
+    var tokenInUrl = urlParams.get('token');
+    var savedToken = localStorage.getItem('sm_admin_authorized_token');
+
+    if (tokenInUrl) {
+      localStorage.setItem('sm_admin_authorized_token', tokenInUrl);
+      savedToken = tokenInUrl;
+      localStorage.setItem('sm_is_paired', 'true');
+    }
+
+    if (!savedToken) {
+      document.getElementById('adminPanel').style.display = 'none';
+      document.getElementById('blockScreen').style.display = 'block';
+    } else {
+      document.getElementById('adminPanel').style.display = 'block';
+      document.getElementById('blockScreen').style.display = 'none';
+    }
+
+    var base64Image = localStorage.getItem('sm_bg') || "";
+    if (base64Image) {
+      var prev = document.getElementById('imgPreview');
+      prev.src = base64Image;
+      prev.style.display = 'inline-block';
+      document.getElementById('btnDelImg').style.display = 'block';
+    }
+
+    function previewImage(event) {
+      var file = event.target.files[0];
+      if (file) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          base64Image = e.target.result;
+          var prev = document.getElementById('imgPreview');
+          prev.src = base64Image;
+          prev.style.display = 'inline-block';
+          document.getElementById('btnDelImg').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function clearImage() {
+      base64Image = "";
+      document.getElementById('phoneImageInput').value = "";
+      document.getElementById('imgPreview').style.display = 'none';
+      document.getElementById('btnDelImg').style.display = 'none';
+    }
+
     function saveData() {
+      if (base64Image) {
+        localStorage.setItem('sm_bg', base64Image);
+      } else {
+        localStorage.removeItem('sm_bg');
+      }
+
       var cfg = {
         masjidTitle: document.getElementById('masjidTitle').value,
-        bgImage: document.getElementById('bgImage').value,
         footerText: document.getElementById('footerText').value,
+        customBg: base64Image,
         delays: {
           Fajr: parseInt(document.getElementById('iqFajr').value) || 20,
           Dhuhr: parseInt(document.getElementById('iqDhuhr').value) || 15,
@@ -122,9 +209,9 @@
           time: document.getElementById('lessonTime').value
         }
       };
-      document.getElementById('jsonRes').value = JSON.stringify(cfg, null, 2);
-      document.getElementById('outputSec').style.display = 'block';
-      alert('تم توليد كود التحديث بنجاح! انسخه وضعه في config.json');
+
+      localStorage.setItem('sm_remote_data', JSON.stringify(cfg));
+      alert('تم حفظ البيانات والصورة بنجاح!');
     }
   </script>
 </body>
