@@ -24,7 +24,6 @@
     body.theme-emerald { background: radial-gradient(circle at center, #064e3b 0%, #022c22 70%, #01140e 100%); }
     body.theme-charcoal { background: radial-gradient(circle at center, #1e293b 0%, #0f172a 70%, #020617 100%); }
 
-    /* النوافذ العائمة */
     .setup-overlay {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       background: rgba(2, 6, 23, 0.98); z-index: 100000;
@@ -52,7 +51,6 @@
     .btn-file { background: #475569; color: #fff; }
     .btn-del { background: #b91c1c; color: #fff; padding: 6px 12px; font-size: 0.85rem; border-radius: 6px; border: none; cursor: pointer; }
 
-    /* الشريط العلوي */
     .top-bar { 
       background: rgba(15, 23, 42, 0.85); padding: 8px 25px; border-radius: 14px;
       display: flex; justify-content: space-between; align-items: center; 
@@ -66,7 +64,6 @@
     .btn-qr-pair.locked { background: #334155; color: #94a3b8; }
     .settings-trigger { cursor: pointer; opacity: 0.8; font-size: 1.3rem; }
 
-    /* القسم الأوسط */
     .center-section { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 0 10px; }
     .side-box { 
       text-align: center; min-width: 155px; background: rgba(15, 23, 42, 0.75); 
@@ -84,7 +81,6 @@
     .hijri-date { font-size: 1.45rem; font-weight: 900; color: #facc15; margin-top: 6px; }
     .greg-date { font-size: 1.15rem; font-weight: 700; color: #93c5fd; margin-top: 2px; direction: ltr; }
 
-    /* شريط الأذكار والتنازلي */
     .middle-info-bar { display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 0 10px; }
     .dhikr-box { 
       flex: 1.8; background: rgba(15, 23, 42, 0.8); border-radius: 18px; 
@@ -100,7 +96,6 @@
     .countdown-bar.green-mode { border-color: #22c55e; }
     .countdown-bar.green-mode .count-val { color: #22c55e; text-shadow: 0 0 12px #22c55e; }
 
-    /* شبكة الصلوات */
     .prayers-row { display: flex; justify-content: space-between; gap: 12px; padding: 0 10px; }
     .p-card { 
       flex: 1; background: rgba(15, 23, 42, 0.75); border-radius: 18px; 
@@ -115,7 +110,6 @@
     .p-time { font-size: 2.4rem; font-weight: 900; font-family: monospace; }
     .p-iqama { font-size: 1.25rem; font-weight: 800; color: #93c5fd; direction: ltr; }
 
-    /* الشريط الإخباري */
     .bottom-bar { 
       background: rgba(15, 23, 42, 0.85); padding: 6px 20px; border-radius: 12px; 
       overflow: hidden; white-space: nowrap; display: flex; align-items: center; height: 44px;
@@ -127,7 +121,6 @@
     }
     @keyframes marquee { 0% { transform: translate3d(0,0,0); } 100% { transform: translate3d(-100%,0,0); } }
 
-    /* الشاشات الكبرى */
     .fullscreen-modal {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       background: rgba(2, 6, 23, 0.97); z-index: 99999; display: none;
@@ -144,7 +137,7 @@
 </head>
 <body class="theme-navy">
 
-  <!-- نافذة الباركود للربط الحصري بهاتف الإمام -->
+  <!-- نافذة الباركود -->
   <div class="setup-overlay" id="qrPairModal">
     <div class="setup-box" style="text-align: center; max-width: 480px;">
       <div class="setup-title" id="qrTitle">📱 ربط هاتف الإمام الحصري</div>
@@ -164,20 +157,56 @@
     </div>
   </div>
 
-  <!-- نافذة التخصيص الكاملة -->
+  <!-- نافذة التخصيص الكاملة مع خيار GMT -->
   <div class="setup-overlay" id="setupModal">
     <div class="setup-box">
       <div class="setup-title">⚙️ تخصيص شاشة المسجد</div>
       
-      <label class="setup-label">لغة التنبيه والتاريخ (Display Language):</label>
-      <select id="cfgLang" class="setup-select" onchange="changeLanguage(this.value)">
-        <option value="ar">العربية (Arabic)</option>
-        <option value="fr">Français (الفرنسية)</option>
-        <option value="en">English (الإنجليزية)</option>
-        <option value="es">Español (الإسبانية)</option>
-        <option value="tr">Türkçe (التركية)</option>
-        <option value="de">Deutsch (الألمانية)</option>
-      </select>
+      <div class="setup-row">
+        <div style="flex:1;">
+          <label class="setup-label">لغة التنبيه والتاريخ:</label>
+          <select id="cfgLang" class="setup-select" onchange="changeLanguage(this.value)">
+            <option value="ar">العربية (Arabic)</option>
+            <option value="fr">Français (الفرنسية)</option>
+            <option value="en">English (الإنجليزية)</option>
+            <option value="es">Español (الإسبانية)</option>
+            <option value="tr">Türkçe (التركية)</option>
+            <option value="de">Deutsch (الألمانية)</option>
+          </select>
+        </div>
+        <div style="flex:1;">
+          <label class="setup-label">نطاق التوقيت (Timezone / GMT):</label>
+          <select id="cfgTimezone" class="setup-select">
+            <option value="auto">تلقائي (حسب الجهاز)</option>
+            <option value="-12">GMT -12:00</option>
+            <option value="-11">GMT -11:00</option>
+            <option value="-10">GMT -10:00</option>
+            <option value="-9">GMT -09:00</option>
+            <option value="-8">GMT -08:00</option>
+            <option value="-7">GMT -07:00</option>
+            <option value="-6">GMT -06:00</option>
+            <option value="-5">GMT -05:00</option>
+            <option value="-4">GMT -04:00</option>
+            <option value="-3">GMT -03:00</option>
+            <option value="-2">GMT -02:00</option>
+            <option value="-1">GMT -01:00</option>
+            <option value="0">GMT +00:00 (جرينتش الأصلي)</option>
+            <option value="1">GMT +01:00 (المغرب / فرنسا / إسبانيا)</option>
+            <option value="2">GMT +02:00 (مصر / تركيا شتاءً)</option>
+            <option value="3">GMT +03:00 (مكة المكرمة / إسطنبول)</option>
+            <option value="4">GMT +04:00 (الإمارات / عمان)</option>
+            <option value="5">GMT +05:00 (باكستان)</option>
+            <option value="5.5">GMT +05:30 (الهند)</option>
+            <option value="6">GMT +06:00 (بنغلاديش)</option>
+            <option value="7">GMT +07:00 (إندونيسيا - جاكرتا)</option>
+            <option value="8">GMT +08:00 (ماليزيا / سنغافورة)</option>
+            <option value="9">GMT +09:00</option>
+            <option value="10">GMT +10:00</option>
+            <option value="11">GMT +11:00</option>
+            <option value="12">GMT +12:00</option>
+          </select>
+        </div>
+      </div>
 
       <div class="setup-row">
         <div style="flex:1;">
@@ -206,7 +235,6 @@
       <label class="setup-label">المدينة والدولة:</label>
       <input type="text" id="cfgCityName" class="setup-input" placeholder="القنيطرة، المغرب">
 
-      <!-- صورة المسجد -->
       <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 10px; margin-top: 10px; border: 1px solid #334155;">
         <label class="setup-label" style="margin-top:0; color:#38bdf8;">🖼️ صورة المسجد الخاصة:</label>
         <div style="display:flex; align-items:center; justify-content:space-between;">
@@ -216,7 +244,6 @@
         </div>
       </div>
 
-      <!-- الإحداثيات -->
       <div class="setup-row">
         <div style="flex:1;">
           <label class="setup-label">خط العرض (Lat):</label>
@@ -228,10 +255,8 @@
         </div>
       </div>
 
-      <!-- قسم إدارة أمان الربط -->
       <div style="margin-top: 15px; padding: 12px; background: rgba(239,68,68,0.1); border-radius: 10px; border: 1px solid #ef4444;">
-        <div style="color: #f87171; font-weight: bold; font-size: 0.95rem; margin-bottom: 5px;">🔒 أمان هاتف الإمام المعتمد:</div>
-        <p style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 8px;">إذا غيّر الإمام هاتفه، اضغط هنا لإلغاء القفل والسماح بربط هاتف جديد.</p>
+        <div style="color: #f87171; font-weight: bold; font-size: 0.95rem; margin-bottom: 5px;">🔒 أمان هاتف الإمام:</div>
         <button type="button" class="btn-del" style="width: 100%; padding: 10px;" onclick="resetAdminPairing()">إعادة ضبط الربط وفتح الباركود لهاتف جديد</button>
       </div>
 
@@ -338,7 +363,6 @@
       }
     };
 
-    // توليد مفتاح أمان للمسجد لأول مرة
     if (!localStorage.getItem('sm_pairing_token')) {
       var randToken = 'KEY_' + Math.random().toString(36).substring(2, 10).toUpperCase() + Date.now().toString(36).toUpperCase();
       localStorage.setItem('sm_pairing_token', randToken);
@@ -349,6 +373,7 @@
       name: localStorage.getItem('sm_name') || "مسجد النور الذكي",
       city: localStorage.getItem('sm_city') || "القنيطرة، المغرب",
       lang: localStorage.getItem('sm_lang') || "fr",
+      timezone: localStorage.getItem('sm_tz') || "auto",
       hijriOffset: parseInt(localStorage.getItem('sm_hijri_off')) || 0,
       lat: parseFloat(localStorage.getItem('sm_lat')) || 34.2610,
       lng: parseFloat(localStorage.getItem('sm_lng')) || -6.5802,
@@ -369,31 +394,28 @@
     ];
     var dhikrIdx = 0;
 
-    // نافذة الربط الحصري بالباركود
     function openPairingModal() {
-      var pBtn = document.getElementById('btnPairDevice');
       var qrModal = document.getElementById('qrPairModal');
       var qrImg = document.getElementById('qrImg');
       var qrTitle = document.getElementById('qrTitle');
       var qrDesc = document.getElementById('qrDesc');
       var pInfo = document.getElementById('pairStatusInfo');
+      var qrContainer = document.getElementById('qrContainer');
 
       if (mConfig.isPaired) {
         qrTitle.innerText = "🔒 الشاشة مقفلة ومربوطة";
         qrDesc.innerText = "هذا المسجد مربوط بالفعل بهاتف المسؤول المعتمد الوحيد.";
         qrContainer.style.display = "none";
-        pInfo.innerHTML = "❌ لا يمكن لأي شخص آخر مسح الكود أو التحكم في الشاشة.<br>إذا أردت ربط هاتف جديد، يرجى الدخول إلى ⚙️ الإعدادات والضغط على (إعادة ضبط الربط).";
+        pInfo.innerHTML = "❌ لا يمكن لأي شخص آخر مسح الكود.<br>لربط هاتف جديد، ادخل إلى ⚙️ الإعدادات واضغط على (إعادة ضبط الربط).";
       } else {
         qrTitle.innerText = "📱 ربط هاتف الإمام الحصري";
         qrDesc.innerText = "امسح هذا الرمز بكاميرا هاتفك لتصبح المسؤول المعتمد الوحيد لهذا المسجد:";
         qrContainer.style.display = "inline-block";
         pInfo.innerHTML = "🔐 عند مسح هذا الرمز، سيتم قفل التحكم وحصره على هاتفك فقط!";
 
-        // توليد رابط لوحة التحكم مع كود الأمان المشفر
         var currentUrl = window.location.href.split('index.html')[0].split('#')[0].split('?')[0];
         if (!currentUrl.endsWith('/')) currentUrl += '/';
         var adminTarget = currentUrl + 'admin.html?token=' + encodeURIComponent(mConfig.pairingToken);
-        
         qrImg.src = "https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=" + encodeURIComponent(adminTarget);
       }
       qrModal.style.display = 'flex';
@@ -423,7 +445,6 @@
       }
     }
 
-    // التاريخ الهجري والميلادي
     function getHijriDate(offsetDays) {
       var d = new Date();
       d.setDate(d.getDate() + offsetDays);
@@ -445,8 +466,9 @@
     }
 
     function applyVisualTheme() {
-      if (mConfig.customBg && mConfig.customBg !== "") {
-        document.body.style.backgroundImage = "url('" + mConfig.customBg + "')";
+      var storedBg = localStorage.getItem('sm_bg') || mConfig.customBg;
+      if (storedBg && storedBg !== "") {
+        document.body.style.backgroundImage = "url('" + storedBg + "')";
         document.body.className = "";
         document.getElementById('btnRemoveBg').style.display = "inline-block";
       } else {
@@ -459,7 +481,7 @@
     function changeTheme(th) {
       mConfig.theme = th;
       localStorage.setItem('sm_theme', th);
-      if (!mConfig.customBg) document.body.className = th;
+      if (!localStorage.getItem('sm_bg')) document.body.className = th;
     }
 
     function changeLanguage(langKey) {
@@ -511,6 +533,7 @@
       document.getElementById('cfgLng').value = mConfig.lng;
       document.getElementById('cfgTheme').value = mConfig.theme;
       document.getElementById('cfgLang').value = mConfig.lang;
+      document.getElementById('cfgTimezone').value = mConfig.timezone;
       document.getElementById('cfgHijriOffset').value = mConfig.hijriOffset;
       applyVisualTheme();
       document.getElementById('setupModal').style.display = 'flex';
@@ -520,6 +543,7 @@
       var n = document.getElementById('cfgMasjidName').value.trim();
       var c = document.getElementById('cfgCityName').value.trim();
       var l = document.getElementById('cfgLang').value;
+      var tz = document.getElementById('cfgTimezone').value;
       var hOff = parseInt(document.getElementById('cfgHijriOffset').value);
       var lt = parseFloat(document.getElementById('cfgLat').value);
       var lg = parseFloat(document.getElementById('cfgLng').value);
@@ -527,6 +551,7 @@
       if (n) { mConfig.name = n; localStorage.setItem('sm_name', n); }
       if (c) { mConfig.city = c; localStorage.setItem('sm_city', c); }
       if (l) { mConfig.lang = l; localStorage.setItem('sm_lang', l); }
+      if (tz) { mConfig.timezone = tz; localStorage.setItem('sm_tz', tz); }
       if (!isNaN(hOff)) { mConfig.hijriOffset = hOff; localStorage.setItem('sm_hijri_off', hOff); }
       if (!isNaN(lt)) { mConfig.lat = lt; localStorage.setItem('sm_lat', lt); }
       if (!isNaN(lg)) { mConfig.lng = lg; localStorage.setItem('sm_lng', lg); }
@@ -550,8 +575,9 @@
     }
 
     function applyHeaderInfo() {
+      var tzText = mConfig.timezone === 'auto' ? '' : ' (' + (parseFloat(mConfig.timezone) >= 0 ? 'GMT+' + mConfig.timezone : 'GMT' + mConfig.timezone) + ')';
       document.getElementById('dispMasjidTitle').innerText = mConfig.name;
-      document.getElementById('dispCityBadge').innerText = "📍 " + mConfig.city;
+      document.getElementById('dispCityBadge').innerText = "📍 " + mConfig.city + tzText;
     }
 
     function radToDeg(r) { return r * 180.0 / Math.PI; }
@@ -562,7 +588,14 @@
       var year = d.getFullYear();
       var month = d.getMonth() + 1;
       var day = d.getDate();
-      var timezone = -d.getTimezoneOffset() / 60.0;
+      
+      // اعتماد توقيت GMT المختار يدوياً أو التلقائي
+      var timezone = 0;
+      if (mConfig.timezone === 'auto') {
+        timezone = -d.getTimezoneOffset() / 60.0;
+      } else {
+        timezone = parseFloat(mConfig.timezone);
+      }
 
       if (month <= 2) { year -= 1; month += 12; }
       var A = Math.floor(year / 100);
@@ -650,6 +683,7 @@
       document.getElementById('liveGregDate').innerText = getGregorianDate(mConfig.lang);
 
       var nowSec = h * 3600 + m * 60 + s;
+      
       var pList = [
         { id: "Fajr", name: "الفجر", adhan: prayerSecs.Fajr, iq: delays.Fajr * 60 },
         { id: "Dhuhr", name: "الظهر", adhan: prayerSecs.Dhuhr, iq: delays.Dhuhr * 60 },
@@ -698,6 +732,7 @@
             break;
           }
         }
+        
         if (!nextP) {
           nextP = pList[0];
           rem = (86400 - nowSec) + pList[0].adhan;
