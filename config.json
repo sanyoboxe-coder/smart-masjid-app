@@ -1,0 +1,23 @@
+{
+  "masjidTitle": "🕌 نظام المسجد الذكي العالمي",
+  "bgImage": "",
+  "footerText": "مرحباً بكم في نظام إدارة المسجد الذكي • تقبل الله منا ومنكم صالح الأعمال",
+  "delays": {
+    "Fajr": 20,
+    "Dhuhr": 15,
+    "Asr": 15,
+    "Maghrib": 10,
+    "Isha": 15
+  },
+  "janaza": {
+    "active": false,
+    "name": "",
+    "time": "بعد صلاة العصر"
+  },
+  "lesson": {
+    "active": false,
+    "title": "",
+    "lecturer": "",
+    "time": ""
+  }
+}
