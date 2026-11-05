@@ -9,7 +9,7 @@
     html, body { width: 100%; height: 100%; overflow: hidden; background: #020617; }
     body {
       color: #fff;
-      font-family: system-ui, -apple-system, sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -24,6 +24,7 @@
     body.theme-emerald { background: radial-gradient(circle at center, #064e3b 0%, #022c22 70%, #01140e 100%); }
     body.theme-charcoal { background: radial-gradient(circle at center, #1e293b 0%, #0f172a 70%, #020617 100%); }
 
+    /* النوافذ العائمة */
     .setup-overlay {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       background: rgba(2, 6, 23, 0.98); z-index: 100000;
@@ -31,7 +32,7 @@
     }
     .setup-box {
       background: #0f172a; border: 2px solid #38bdf8; border-radius: 20px;
-      padding: 25px 35px; width: 100%; max-width: 600px; text-align: right;
+      padding: 25px 35px; width: 100%; max-width: 620px; text-align: right;
       box-shadow: 0 10px 40px rgba(0,0,0,0.8);
       max-height: 90vh; overflow-y: auto;
     }
@@ -51,6 +52,7 @@
     .btn-file { background: #475569; color: #fff; }
     .btn-del { background: #b91c1c; color: #fff; padding: 6px 12px; font-size: 0.85rem; border-radius: 6px; border: none; cursor: pointer; }
 
+    /* الشريط العلوي */
     .top-bar { 
       background: rgba(15, 23, 42, 0.85); padding: 8px 25px; border-radius: 14px;
       display: flex; justify-content: space-between; align-items: center; 
@@ -64,6 +66,7 @@
     .btn-qr-pair.locked { background: #334155; color: #94a3b8; }
     .settings-trigger { cursor: pointer; opacity: 0.8; font-size: 1.3rem; }
 
+    /* القسم الأوسط */
     .center-section { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 0 10px; }
     .side-box { 
       text-align: center; min-width: 155px; background: rgba(15, 23, 42, 0.75); 
@@ -144,20 +147,17 @@
       <p id="qrDesc" style="color: #94a3b8; font-size: 1rem; margin-bottom: 15px;">
         امسح هذا الرمز بكاميرا هاتفك لتصبح المسؤول المعتمد الوحيد لهذا المسجد:
       </p>
-      
       <div id="qrContainer" style="background: #fff; padding: 15px; border-radius: 16px; display: inline-block; margin-bottom: 15px;">
         <img id="qrImg" src="" alt="QR Pairing" style="width: 220px; height: 220px; display: block;">
       </div>
-
       <div id="pairStatusInfo" style="font-size: 0.95rem; color: #38bdf8; margin-bottom: 15px;">
         🔐 الرمز مخصص لهذا المسجد فقط وسيتم قفل النظام فور اكتمال الربط
       </div>
-
       <button type="button" class="btn-act btn-gps" onclick="document.getElementById('qrPairModal').style.display='none'">إغلاق</button>
     </div>
   </div>
 
-  <!-- نافذة التخصيص الكاملة مع خيار GMT -->
+  <!-- نافذة التخصيص الكاملة -->
   <div class="setup-overlay" id="setupModal">
     <div class="setup-box">
       <div class="setup-title">⚙️ تخصيص شاشة المسجد</div>
@@ -175,35 +175,14 @@
           </select>
         </div>
         <div style="flex:1;">
-          <label class="setup-label">نطاق التوقيت (Timezone / GMT):</label>
+          <label class="setup-label">نطاق التوقيت الفعلي (GMT):</label>
           <select id="cfgTimezone" class="setup-select">
-            <option value="auto">تلقائي (حسب الجهاز)</option>
-            <option value="-12">GMT -12:00</option>
-            <option value="-11">GMT -11:00</option>
-            <option value="-10">GMT -10:00</option>
-            <option value="-9">GMT -09:00</option>
-            <option value="-8">GMT -08:00</option>
-            <option value="-7">GMT -07:00</option>
-            <option value="-6">GMT -06:00</option>
-            <option value="-5">GMT -05:00</option>
-            <option value="-4">GMT -04:00</option>
-            <option value="-3">GMT -03:00</option>
-            <option value="-2">GMT -02:00</option>
-            <option value="-1">GMT -01:00</option>
+            <option value="auto">تلقائي (حسب توقيت الجهاز)</option>
             <option value="0">GMT +00:00 (جرينتش الأصلي)</option>
-            <option value="1">GMT +01:00 (المغرب / فرنسا / إسبانيا)</option>
-            <option value="2">GMT +02:00 (مصر / تركيا شتاءً)</option>
-            <option value="3">GMT +03:00 (مكة المكرمة / إسطنبول)</option>
+            <option value="1" selected>GMT +01:00 (المغرب / الجزائر / أوروبا)</option>
+            <option value="2">GMT +02:00 (مصر)</option>
+            <option value="3">GMT +03:00 (مكة المكرمة)</option>
             <option value="4">GMT +04:00 (الإمارات / عمان)</option>
-            <option value="5">GMT +05:00 (باكستان)</option>
-            <option value="5.5">GMT +05:30 (الهند)</option>
-            <option value="6">GMT +06:00 (بنغلاديش)</option>
-            <option value="7">GMT +07:00 (إندونيسيا - جاكرتا)</option>
-            <option value="8">GMT +08:00 (ماليزيا / سنغافورة)</option>
-            <option value="9">GMT +09:00</option>
-            <option value="10">GMT +10:00</option>
-            <option value="11">GMT +11:00</option>
-            <option value="12">GMT +12:00</option>
           </select>
         </div>
       </div>
@@ -230,7 +209,7 @@
       </div>
 
       <label class="setup-label">اسم المسجد والحي:</label>
-      <input type="text" id="cfgMasjidName" class="setup-input" placeholder="مسجد النور - حي السلام">
+      <input type="text" id="cfgMasjidName" class="setup-input" placeholder="مسجد أبي هريرة - القنيطرة">
 
       <label class="setup-label">المدينة والدولة:</label>
       <input type="text" id="cfgCityName" class="setup-input" placeholder="القنيطرة، المغرب">
@@ -278,7 +257,7 @@
 
   <!-- الشريط العلوي -->
   <div class="top-bar">
-    <div id="dispMasjidTitle">🕌 مسجد النور الذكي</div>
+    <div id="dispMasjidTitle">🕌 مسجد أبي هريرة - القنيطرة</div>
     <div class="top-tools">
       <button type="button" class="btn-qr-pair" id="btnPairDevice" onclick="openPairingModal()">📱 هاتف الإمام</button>
       <div id="dispCityBadge" style="color: #38bdf8;">📍 جاري الضبط...</div>
@@ -286,7 +265,7 @@
     </div>
   </div>
 
-  <!-- القسم الأوسط (الساعة والتاريخين) -->
+  <!-- القسم الأوسط -->
   <div class="center-section">
     <div class="side-box">
       <div class="side-title" id="dispJumuaTitle">الجمعة</div>
@@ -309,7 +288,7 @@
     <div class="countdown-bar" id="countdownBox"><span>⏳</span><span id="countdownLabel">الصلاة القادمة</span><span class="count-val" id="countdownVal">00:00:00</span></div>
   </div>
 
-  <!-- الصلوات الخمس مع الترجمة -->
+  <!-- الصلوات الخمس -->
   <div class="prayers-row">
     <div class="p-card" id="card-Fajr"><div class="p-name">الفجر</div><div class="p-subname" id="sub-Fajr">Fajr</div><div class="p-time" id="time-Fajr">--:--</div><div class="p-iqama" id="iqama-Fajr">+20</div></div>
     <div class="p-card" id="card-Dhuhr"><div class="p-name">الظهر</div><div class="p-subname" id="sub-Dhuhr">Dhuhr</div><div class="p-time" id="time-Dhuhr">--:--</div><div class="p-iqama" id="iqama-Dhuhr">+15</div></div>
@@ -318,7 +297,7 @@
     <div class="p-card" id="card-Isha"><div class="p-name">العشاء</div><div class="p-subname" id="sub-Isha">Isha</div><div class="p-time" id="time-Isha">--:--</div><div class="p-iqama" id="iqama-Isha">+15</div></div>
   </div>
 
-  <!-- الشريط الإخباري بالأسفل -->
+  <!-- الشريط الإخباري -->
   <div class="bottom-bar">
     <div class="marquee-content" id="bottomMarquee">مرحباً بكم في نظام إدارة المسجد الذكي • تقبل الله منا ومنكم صالح الأعمال</div>
   </div>
@@ -370,10 +349,10 @@
     }
 
     var mConfig = {
-      name: localStorage.getItem('sm_name') || "مسجد النور الذكي",
+      name: localStorage.getItem('sm_name') || "مسجد أبي هريرة - القنيطرة",
       city: localStorage.getItem('sm_city') || "القنيطرة، المغرب",
       lang: localStorage.getItem('sm_lang') || "fr",
-      timezone: localStorage.getItem('sm_tz') || "auto",
+      timezone: localStorage.getItem('sm_tz') || "1",
       hijriOffset: parseInt(localStorage.getItem('sm_hijri_off')) || 0,
       lat: parseFloat(localStorage.getItem('sm_lat')) || 34.2610,
       lng: parseFloat(localStorage.getItem('sm_lng')) || -6.5802,
@@ -389,7 +368,7 @@
       "«سُبْحَانَ اللهِ وَبِحَمْدِهِ، سُبْحَانَ اللهِ الْعَظِيمِ»",
       "«لا إِلَهَ إِلا اللَّهُ وَحْدَهُ لا شَرِيكَ لَهُ، لَهُ المُلْكُ وَلَهُ الحَمْدُ»",
       "«أَسْتَغْفِرُ اللهَ الَّذِي لا إِلَهَ إِلا هُوَ الحَيَّ القَيُّومَ وَأَتُوبُ إِلَيْهِ»",
-      "«اللَّهُمَّ أَعِنِّي عَلَى ذِكْرِكَ وَشُكْرِكَ وَحُسْنِ عِبَادَتِكَ»",
+      "«اللَّهُمَّ أَعِّني عَلَى ذِكْرِكَ وَشُكْرِكَ وَحُسْنِ عِبَادَتِكَ»",
       "«لا حَوْلَ وَلا قُوَّةَ إِلا بِاللهِ الْعَلِيِّ الْعَظِيمِ»"
     ];
     var dhikrIdx = 0;
@@ -580,6 +559,9 @@
       document.getElementById('dispCityBadge').innerText = "📍 " + mConfig.city + tzText;
     }
 
+    // ==============================================================
+    // محرك الحساب الفلكي القياسي والدقيق (معادلات زوايا الشمس الحقيقية)
+    // ==============================================================
     function radToDeg(r) { return r * 180.0 / Math.PI; }
     function degToRad(d) { return d * Math.PI / 180.0; }
 
@@ -589,62 +571,63 @@
       var month = d.getMonth() + 1;
       var day = d.getDate();
       
-      // اعتماد توقيت GMT المختار يدوياً أو التلقائي
-      var timezone = 0;
+      var timezone = 1; // الافتراضي للمغرب GMT+1
       if (mConfig.timezone === 'auto') {
         timezone = -d.getTimezoneOffset() / 60.0;
       } else {
         timezone = parseFloat(mConfig.timezone);
       }
 
-      if (month <= 2) { year -= 1; month += 12; }
-      var A = Math.floor(year / 100);
-      var B = 2 - A + Math.floor(A / 4);
-      var JD = Math.floor(365.25 * (year + 4716)) + Math.floor(30.6001 * (month + 1)) + day + B - 1524.5;
+      // حساب اليوم في السنة (Day of the Year)
+      var N = Math.floor((275 * month) / 9) - (Math.floor((month + 9) / 12) * (1 + Math.floor((year - 4 * Math.floor(year / 4) + 2) / 3))) + day - 30;
+      
+      // معادلة انحراف الشمس وميلها (Declination & Equation of Time)
+      var B = degToRad(360 * (N - 81) / 365);
+      var EoT = 9.87 * Math.sin(2 * B) - 7.53 * Math.cos(B) - 1.5 * Math.sin(B); // بالدقائق
+      var decl = 23.45 * Math.sin(degToRad(360 * (284 + N) / 365)); // زاوية الميل
 
-      var D = JD - 2451545.0;
-      var g = (357.529 + 0.98560028 * D) % 360;
-      var q = (280.459 + 0.98564736 * D) % 360;
-      var L = (q + 1.915 * Math.sin(degToRad(g)) + 0.020 * Math.sin(degToRad(2 * g))) % 360;
-      var e = 23.439 - 0.00000036 * D;
+      // زوال الشمس (الظهر الفلكي الحقيقي بالدقائق)
+      var solarNoonMin = 720 - (4 * mConfig.lng) - EoT + (timezone * 60);
 
-      var RA = radToDeg(Math.atan2(Math.cos(degToRad(e)) * Math.sin(degToRad(L)), Math.cos(degToRad(L)))) / 15.0;
-      if (RA < 0) RA += 24;
-      var decl = radToDeg(Math.asin(Math.sin(degToRad(e)) * Math.sin(degToRad(L))));
-      var EqT = q / 15.0 - RA;
-
-      var noon = 12 + timezone - (mConfig.lng / 15.0) - EqT;
-
-      function sunAngleTime(angle, direction) {
-        var cosH = (Math.sin(degToRad(-angle)) - Math.sin(degToRad(mConfig.lat)) * Math.sin(degToRad(decl))) /
+      // دالة حساب زاوية الارتفاع الشمسي
+      function hourAngle(alpha) {
+        var cosH = (Math.sin(degToRad(alpha)) - Math.sin(degToRad(mConfig.lat)) * Math.sin(degToRad(decl))) /
                    (Math.cos(degToRad(mConfig.lat)) * Math.cos(degToRad(decl)));
-        if (cosH > 1 || cosH < -1) return noon;
-        var H = radToDeg(Math.acos(cosH)) / 15.0;
-        return noon + (direction === 'ccw' ? -H : H);
+        if (cosH > 1) cosH = 1;
+        if (cosH < -1) cosH = -1;
+        return radToDeg(Math.acos(cosH));
       }
 
-      function asrTime() {
-        var targetAngle = -radToDeg(Math.atan(1 + Math.tan(degToRad(Math.abs(mConfig.lat - decl)))));
-        var cosH = (Math.sin(degToRad(targetAngle)) - Math.sin(degToRad(mConfig.lat)) * Math.sin(degToRad(decl))) /
-                   (Math.cos(degToRad(mConfig.lat)) * Math.cos(degToRad(decl)));
-        if (cosH > 1 || cosH < -1) return noon + 3;
-        var H = radToDeg(Math.acos(cosH)) / 15.0;
-        return noon + H;
-      }
+      // 1. الفجر (زاوية 19.0° معيار الأوقاف المغربية)
+      var hFajr = hourAngle(-19.0);
+      var fajrMin = solarNoonMin - (hFajr * 4);
 
-      var fajrH = sunAngleTime(18.5, 'ccw');
-      var riseH = sunAngleTime(0.833, 'ccw');
-      var dhuhrH = noon + (2 / 60);
-      var asrH = asrTime();
-      var maghribH = sunAngleTime(0.833, 'cw');
-      var ishaH = sunAngleTime(17.0, 'cw');
+      // 2. الشروق (زاوية 0.833°)
+      var hRise = hourAngle(-0.833);
+      var riseMin = solarNoonMin - (hRise * 4);
 
-      prayerSecs.Fajr = Math.floor(fajrH * 3600);
-      prayerSecs.Sunrise = Math.floor(riseH * 3600);
-      prayerSecs.Dhuhr = Math.floor(dhuhrH * 3600);
-      prayerSecs.Asr = Math.floor(asrH * 3600);
-      prayerSecs.Maghrib = Math.floor(maghribH * 3600);
-      prayerSecs.Isha = Math.floor(ishaH * 3600);
+      // 3. الظهر (زوال الشمس + دقيقتين احتياط شرعي)
+      var dhuhrMin = solarNoonMin + 2;
+
+      // 4. العصر (ظل الشيء مثله)
+      var asrAlt = radToDeg(Math.atan(1.0 / (1.0 + Math.tan(degToRad(Math.abs(mConfig.lat - decl))))));
+      var hAsr = hourAngle(asrAlt);
+      var asrMin = solarNoonMin + (hAsr * 4);
+
+      // 5. المغرب (غروب كامل القرص -0.833°)
+      var maghribMin = solarNoonMin + (hRise * 4);
+
+      // 6. العشاء (زاوية 17.0° الشفق الأحمر)
+      var hIsha = hourAngle(-17.0);
+      var ishaMin = solarNoonMin + (hIsha * 4);
+
+      // تحويل الدقائق إلى ثواني اليوم مع ضمان أنها موجبة وضمن 24 ساعة
+      prayerSecs.Fajr = Math.floor(((fajrMin + 1440) % 1440) * 60);
+      prayerSecs.Sunrise = Math.floor(((riseMin + 1440) % 1440) * 60);
+      prayerSecs.Dhuhr = Math.floor(((dhuhrMin + 1440) % 1440) * 60);
+      prayerSecs.Asr = Math.floor(((asrMin + 1440) % 1440) * 60);
+      prayerSecs.Maghrib = Math.floor(((maghribMin + 1440) % 1440) * 60);
+      prayerSecs.Isha = Math.floor(((ishaMin + 1440) % 1440) * 60);
 
       renderCards();
     }
@@ -670,6 +653,9 @@
       document.getElementById('iqama-Isha').innerText = '+' + delays.Isha;
     }
 
+    // ==============================================================
+    // دالة التوقيت والتنازلي الصارمة
+    // ==============================================================
     function tick() {
       var d = new Date();
       var h = d.getHours();
@@ -697,6 +683,7 @@
       var mTimer = document.getElementById('fsTimer');
       var isIq = false, isPray = false, activeP = null, rem = 0;
 
+      // فحص أوقات الإقامة
       for (var i = 0; i < pList.length; i++) {
         var p = pList[i];
         var iqEnd = p.adhan + p.iq;
@@ -723,6 +710,7 @@
         modal.style.display = 'none';
       }
 
+      // تحديد الصلاة القادمة
       if (!isIq && !isPray) {
         var nextP = null;
         for (var j = 0; j < pList.length; j++) {
@@ -733,6 +721,7 @@
           }
         }
         
+        // بعد العشاء -> الفجر حتماً
         if (!nextP) {
           nextP = pList[0];
           rem = (86400 - nowSec) + pList[0].adhan;
