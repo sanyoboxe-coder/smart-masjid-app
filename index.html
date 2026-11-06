@@ -116,7 +116,7 @@
       border: 1px solid rgba(255,255,255,0.08);
     }
     .marquee-content {
-      display: inline-block; padding-left: 100%; animation: marquee 28s linear infinite;
+      display: inline-block; padding-left: 100%; animation: marquee 30s linear infinite;
       font-size: 1.25rem; font-weight: 800; color: #facc15;
     }
     @keyframes marquee { 0% { transform: translate3d(0,0,0); } 100% { transform: translate3d(-100%,0,0); } }
@@ -183,7 +183,6 @@
         </div>
       </div>
 
-      <!-- خانات التعديل اليدوي بالدقائق -->
       <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; margin-top: 10px; border: 1px solid #334155;">
         <label class="setup-label" style="margin-top:0; color:#38bdf8;">⏱️ تعديل الدقائق (+/-) لمطابقة ساعة المسجد بدقة:</label>
         <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; text-align: center;">
@@ -291,9 +290,9 @@
     <div class="p-card" id="card-Isha"><div class="p-name">العشاء</div><div class="p-subname" id="sub-Isha">Isha</div><div class="p-time" id="time-Isha">--:--</div><div class="p-iqama" id="iqama-Isha">+15</div></div>
   </div>
 
-  <!-- الشريط الإخباري -->
+  <!-- الشريط الإخباري بالأسفل -->
   <div class="bottom-bar">
-    <div class="marquee-content" id="bottomMarquee">مرحباً بكم في نظام إدارة المسجد الذكي • تقبل الله منا ومنكم صالح الأعمال</div>
+    <div class="marquee-content" id="bottomMarquee">«وَأَنَّ الْمَسَاجِدَ لِلَّهِ فَلَا تَدْعُوا مَعَ اللَّهِ أَحَدًا» • اللَّهُمَّ افْتَحْ لَنَا أَبْوَابَ رَحْمَتِكَ • تَقَبَّلَ اللَّهُ مِنَّا وَمِنْكُمُ الصَّلَاةَ وَصَالِحَ الأَعْمَالِ</div>
   </div>
 
   <script>
@@ -303,15 +302,8 @@
       en: { locale: 'en-US', fajr: "Fajr", dhuhr: "Dhuhr", asr: "Asr", maghrib: "Maghrib", isha: "Isha", sunrise: "Sunrise", jumua: "Jumuah", iqamaSub: "Iqama", alignRowsSub: "Straighten the rows", silencePhoneSub: "Turn off your mobile phones" }
     };
 
-    // القيمة الافتراضية تدمج دقيقة الأوقاف الاحتياطية للعصر والمغرب تلقائياً
     var defaultAdjustments = { Fajr: 0, Dhuhr: 0, Asr: 1, Maghrib: 1, Isha: 0 };
-    var savedAdj = localStorage.getItem('sm_adjustments');
-    var currentAdj = savedAdj ? JSON.parse(savedAdj) : defaultAdjustments;
-
-    // التأكد من ضبط العصر والمغرب بدقيقة الزيادة إذا كانت القيمة القديمة 0
-    if (currentAdj.Asr === 0) currentAdj.Asr = 1;
-    if (currentAdj.Maghrib === 0) currentAdj.Maghrib = 1;
-    localStorage.setItem('sm_adjustments', JSON.stringify(currentAdj));
+    var defaultMarquee = "«وَأَنَّ الْمَسَاجِدَ لِلَّهِ فَلَا تَدْعُوا مَعَ اللَّهِ أَحَدًا» • اللَّهُمَّ افْتَحْ لَنَا أَبْوَابَ رَحْمَتِكَ • تَقَبَّلَ اللَّهُ مِنَّا وَمِنْكُمُ الصَّلَاةَ وَصَالِحَ الأَعْمَالِ";
 
     var mConfig = {
       name: localStorage.getItem('sm_name') || "مسجد أبي هريرة - القنيطرة",
@@ -322,7 +314,8 @@
       lat: parseFloat(localStorage.getItem('sm_lat')) || 34.2610,
       lng: parseFloat(localStorage.getItem('sm_lng')) || -6.5802,
       theme: localStorage.getItem('sm_theme') || "theme-navy",
-      adjustments: currentAdj
+      adjustments: JSON.parse(localStorage.getItem('sm_adjustments') || JSON.stringify(defaultAdjustments)),
+      marqueeText: localStorage.getItem('sm_marquee_text') || defaultMarquee
     };
 
     var delays = { Fajr: 20, Dhuhr: 15, Asr: 15, Maghrib: 10, Isha: 15 };
@@ -331,33 +324,4 @@
       "«سُبْحَانَ اللهِ وَبِحَمْدِهِ، سُبْحَانَ اللهِ الْعَظِيمِ»",
       "«لا إِلَهَ إِلا اللَّهُ وَحْدَهُ لا شَرِيكَ لَهُ، لَهُ المُلْكُ وَلَهُ الحَمْدُ»",
       "«أَسْتَغْفِرُ اللهَ الَّذِي لا إِلَهَ إِلا هُوَ الحَيَّ القَيُّومَ وَأَتُوبُ إِلَيْهِ»",
-      "«اللَّهُمَّ أَعِنِّي عَلَى ذِكْرِكَ وَشُكْرِكَ وَحُسْنِ عِبَادَتِكَ»",
-      "«لا حَوْلَ وَلا قُوَّةَ إِلا بِاللهِ الْعَلِيِّ الْعَظِيمِ»"
-    ];
-    var dhikrIdx = 0;
-
-    // محرك الحساب الاحتياطي الداخلي بمعيار وزارة الأوقاف المغربية
-    function calcMoroccoOfflineTimes() {
-      var d = new Date();
-      var year = d.getFullYear();
-      var month = d.getMonth() + 1;
-      var day = d.getDate();
-      var tz = mConfig.timezone === 'auto' ? (-d.getTimezoneOffset() / 60.0) : parseFloat(mConfig.timezone);
-
-      var N = Math.floor((275 * month) / 9) - (Math.floor((month + 9) / 12) * (1 + Math.floor((year - 4 * Math.floor(year / 4) + 2) / 3))) + day - 30;
-      var B = (Math.PI / 180) * (360 * (N - 81) / 365);
-      var EoT = 9.87 * Math.sin(2 * B) - 7.53 * Math.cos(B) - 1.5 * Math.sin(B);
-      var decl = 23.45 * Math.sin((Math.PI / 180) * (360 * (284 + N) / 365));
-
-      var noonMin = 720 - (4 * mConfig.lng) - EoT + (tz * 60);
-
-      function ha(alpha) {
-        var cosH = (Math.sin((Math.PI / 180) * alpha) - Math.sin((Math.PI / 180) * mConfig.lat) * Math.sin((Math.PI / 180) * decl)) /
-                   (Math.cos((Math.PI / 180) * mConfig.lat) * Math.cos((Math.PI / 180) * decl));
-        if (cosH > 1) cosH = 1;
-        if (cosH < -1) cosH = -1;
-        return (180 / Math.PI) * Math.acos(cosH);
-      }
-
-      var fajrM = noonMin - (ha(-19.0) * 4);
-      var riseM = noonMin - (ha(-0.
+      "«اللَّهُمَّ أَعِنِّي عَلَى ذِكْرِكَ وَشُ
