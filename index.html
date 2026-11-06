@@ -9,21 +9,64 @@
     html, body { width: 100%; height: 100%; overflow: hidden; background: #020617; }
     body {
       color: #fff;
-      font-family: system-ui, -apple-system, sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       padding: 15px 25px;
-      background: radial-gradient(circle at center, #1e3a8a 0%, #0a1128 70%, #020617 100%);
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      transition: background 0.4s ease-in-out;
     }
 
+    body.theme-navy { background: radial-gradient(circle at center, #1e3a8a 0%, #0a1128 70%, #020617 100%); }
+    body.theme-emerald { background: radial-gradient(circle at center, #064e3b 0%, #022c22 70%, #01140e 100%); }
+    body.theme-charcoal { background: radial-gradient(circle at center, #1e293b 0%, #0f172a 70%, #020617 100%); }
+
+    /* النوافذ العائمة */
+    .setup-overlay {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(2, 6, 23, 0.98); z-index: 100000;
+      display: none; justify-content: center; align-items: center; padding: 20px;
+    }
+    .setup-box {
+      background: #0f172a; border: 2px solid #38bdf8; border-radius: 20px;
+      padding: 25px 35px; width: 100%; max-width: 620px; text-align: right;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+      max-height: 90vh; overflow-y: auto;
+    }
+    .setup-title { font-size: 1.5rem; font-weight: 900; color: #38bdf8; text-align: center; margin-bottom: 15px; }
+    .setup-label { font-size: 0.95rem; color: #94a3b8; margin-top: 10px; margin-bottom: 5px; display: block; font-weight: 700; }
+    .setup-input, .setup-select {
+      width: 100%; padding: 11px; border-radius: 10px; border: 1px solid #334155;
+      background: #1e293b; color: #fff; font-size: 1rem; outline: none;
+    }
+    .setup-row { display: flex; gap: 10px; margin-top: 5px; }
+    .btn-act {
+      width: 100%; padding: 12px; border: none; border-radius: 10px; font-size: 1.05rem;
+      font-weight: 900; cursor: pointer; margin-top: 10px; transition: 0.2s;
+    }
+    .btn-save { background: #16a34a; color: #fff; margin-top: 15px; }
+    .btn-gps { background: #0284c7; color: #fff; }
+    .btn-file { background: #475569; color: #fff; }
+    .btn-del { background: #b91c1c; color: #fff; padding: 6px 12px; font-size: 0.85rem; border-radius: 6px; border: none; cursor: pointer; }
+
+    /* الشريط العلوي */
     .top-bar { 
       background: rgba(15, 23, 42, 0.85); padding: 8px 25px; border-radius: 14px;
       display: flex; justify-content: space-between; align-items: center; 
       font-size: 1.25rem; font-weight: 700; border: 1px solid rgba(255,255,255,0.1);
     }
     .top-tools { display: flex; align-items: center; gap: 12px; }
+    .btn-qr-pair {
+      background: #0284c7; color: #fff; border: none; padding: 6px 14px; border-radius: 8px;
+      font-size: 0.95rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px;
+    }
+    .btn-qr-pair.locked { background: #334155; color: #94a3b8; }
+    .settings-trigger { cursor: pointer; opacity: 0.8; font-size: 1.3rem; }
 
+    /* القسم الأوسط */
     .center-section { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 0 10px; }
     .side-box { 
       text-align: center; min-width: 155px; background: rgba(15, 23, 42, 0.75); 
@@ -39,7 +82,7 @@
     }
     .main-clock { font-size: 4.8rem; font-weight: 900; font-family: monospace; line-height: 1; letter-spacing: 2px; }
     .hijri-date { font-size: 1.45rem; font-weight: 900; color: #facc15; margin-top: 6px; }
-    .greg-date { font-size: 1.15rem; font-weight: 700; color: #93c5fd; margin-top: 2px; }
+    .greg-date { font-size: 1.15rem; font-weight: 700; color: #93c5fd; margin-top: 2px; direction: ltr; }
 
     .middle-info-bar { display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 0 10px; }
     .dhikr-box { 
@@ -53,7 +96,10 @@
       gap: 10px; font-size: 1.35rem; font-weight: 800; border: 1px solid rgba(255,255,255,0.08);
     }
     .countdown-bar .count-val { font-family: monospace; font-size: 1.8rem; color: #38bdf8; direction: ltr; }
+    .countdown-bar.green-mode { border-color: #22c55e; }
+    .countdown-bar.green-mode .count-val { color: #22c55e; text-shadow: 0 0 12px #22c55e; }
 
+    /* بطاقات الصلوات الخمس */
     .prayers-row { display: flex; justify-content: space-between; gap: 12px; padding: 0 10px; }
     .p-card { 
       flex: 1; background: rgba(15, 23, 42, 0.75); border-radius: 18px; 
@@ -68,6 +114,7 @@
     .p-time { font-size: 2.4rem; font-weight: 900; font-family: monospace; }
     .p-iqama { font-size: 1.25rem; font-weight: 800; color: #93c5fd; direction: ltr; }
 
+    /* الشريط الإخباري بالأسفل */
     .bottom-bar { 
       background: rgba(15, 23, 42, 0.85); padding: 6px 20px; border-radius: 12px; 
       overflow: hidden; white-space: nowrap; display: flex; align-items: center; height: 44px;
@@ -79,93 +126,80 @@
     }
     @keyframes marquee { 0% { transform: translate3d(0,0,0); } 100% { transform: translate3d(-100%,0,0); } }
 
+    /* شاشة الإقامة وملء الشاشة */
     .fullscreen-modal {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       background: rgba(2, 6, 23, 0.97); z-index: 99999; display: none;
       flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 30px;
     }
     .modal-head { font-size: 3.4rem; font-weight: 900; color: #facc15; margin-bottom: 10px; }
+    .modal-head-sub { font-size: 1.8rem; font-weight: 700; color: #e2e8f0; margin-bottom: 20px; text-transform: uppercase; }
     .modal-timer { font-size: 9.5rem; font-weight: 900; font-family: monospace; color: #facc15; text-shadow: 0 0 30px rgba(250,204,21,0.6); direction: ltr; }
     .modal-body { font-size: 2.4rem; font-weight: 800; color: #ffffff; line-height: 1.5; max-width: 90%; }
+    .modal-body-sub { font-size: 1.7rem; font-weight: 700; color: #cbd5e1; margin-top: 10px; }
     .modal-sub { font-size: 2rem; font-weight: 900; color: #ef4444; margin-top: 25px; background: rgba(239,68,68,0.15); padding: 8px 25px; border-radius: 14px; border: 1px solid #ef4444; }
+    .modal-sub-sub { font-size: 1.4rem; font-weight: 700; color: #fca5a5; margin-top: 8px; }
   </style>
 </head>
-<body>
+<body class="theme-navy">
 
-  <div class="fullscreen-modal" id="fsModal">
-    <div class="modal-head" id="fsHead">إِقَامَةُ الصَّلَاةِ</div>
-    <div class="modal-timer" id="fsTimer" style="display:none;">00:00</div>
-    <div class="modal-body">اسْتَوُوا وَاعْتَدِلُوا، وَأَقِيمُوا صُفُوفَكُمْ</div>
-    <div class="modal-sub">📴 يُرْجَى إِغْلَاقُ الْهَوَاتِفِ النَّقَّالَةِ جَزَاكُمُ اللهُ خَيْرًا</div>
-  </div>
-
-  <div class="top-bar">
-    <div id="dispMasjidTitle">🕌 مسجد أبي هريرة - القنيطرة</div>
-    <div class="top-tools">
-      <div id="dispCityBadge" style="color: #38bdf8;">📍 القنيطرة، المغرب</div>
+  <!-- نافذة الباركود -->
+  <div class="setup-overlay" id="qrPairModal">
+    <div class="setup-box" style="text-align: center; max-width: 480px;">
+      <div class="setup-title" id="qrTitle">📱 ربط هاتف الإمام الحصري</div>
+      <p id="qrDesc" style="color: #94a3b8; font-size: 1rem; margin-bottom: 15px;">
+        امسح هذا الرمز بكاميرا هاتفك لتصبح المسؤول المعتمد الوحيد لهذا المسجد:
+      </p>
+      <div id="qrContainer" style="background: #fff; padding: 15px; border-radius: 16px; display: inline-block; margin-bottom: 15px;">
+        <img id="qrImg" src="" alt="QR Pairing" style="width: 220px; height: 220px; display: block;">
+      </div>
+      <div id="pairStatusInfo" style="font-size: 0.95rem; color: #38bdf8; margin-bottom: 15px;">
+        🔐 الرمز مخصص لهذا المسجد فقط وسيتم قفل النظام فور اكتمال الربط
+      </div>
+      <button type="button" class="btn-act btn-gps" onclick="document.getElementById('qrPairModal').style.display='none'">إغلاق</button>
     </div>
   </div>
 
-  <div class="center-section">
-    <div class="side-box">
-      <div class="side-title">الجمعة</div>
-      <div class="side-time" id="dispJumua">12:30</div>
-    </div>
-    <div class="clock-card">
-      <div class="main-clock" id="liveClock">00:00:00</div>
-      <div class="hijri-date" id="liveHijriDate">-- هـ</div>
-      <div class="greg-date" id="liveGregDate">--</div>
-    </div>
-    <div class="side-box">
-      <div class="side-title">الشروق</div>
-      <div class="side-time" id="dispSunrise">06:50</div>
-    </div>
-  </div>
+  <!-- نافذة التخصيص الكاملة -->
+  <div class="setup-overlay" id="setupModal">
+    <div class="setup-box">
+      <div class="setup-title">⚙️ تخصيص شاشة المسجد</div>
+      
+      <div class="setup-row">
+        <div style="flex:1;">
+          <label class="setup-label">الهيئة الإسلامية المعتمدة لحساب المواقيت:</label>
+          <select id="cfgMethod" class="setup-select">
+            <option value="21" selected>المغرب - وزارة الأوقاف والشؤون الإسلامية (Salat First)</option>
+            <option value="4">السعودية والخليج - جامعة أم القرى (مكة المكرمة)</option>
+            <option value="5">مصر والدول العربية - الهيئة العامة المصرية للمساحة</option>
+            <option value="3">عالمي / أوروبا وأمريكا - رابطة العالم الإسلامي (MWL)</option>
+            <option value="13">تركيا - رئاسة الشؤون الدينية (Diyanet)</option>
+          </select>
+        </div>
+      </div>
 
-  <div class="middle-info-bar">
-    <div class="dhikr-box" id="dhikrText">«سُبْحَانَ اللهِ وَبِحَمْدِهِ، سُبْحَانَ اللهِ الْعَظِيمِ»</div>
-    <div class="countdown-bar" id="countdownBox"><span>⏳</span><span id="countdownLabel">الصلاة القادمة</span><span class="count-val" id="countdownVal">00:00:00</span></div>
-  </div>
+      <div class="setup-row">
+        <div style="flex:1;">
+          <label class="setup-label">لغة العرض والتنبيه:</label>
+          <select id="cfgLang" class="setup-select" onchange="changeLanguage(this.value)">
+            <option value="ar">العربية (Arabic)</option>
+            <option value="fr" selected>Français (الفرنسية)</option>
+            <option value="en">English (الإنجليزية)</option>
+            <option value="es">Español (الإسبانية)</option>
+            <option value="tr">Türkçe (التركية)</option>
+            <option value="de">Deutsch (الألمانية)</option>
+          </select>
+        </div>
+        <div style="flex:1;">
+          <label class="setup-label">نطاق التوقيت (GMT):</label>
+          <select id="cfgTimezone" class="setup-select">
+            <option value="1" selected>GMT +01:00 (المغرب / أوروبا الوسطى)</option>
+            <option value="0">GMT +00:00 (توقيت رمضان بالمغرب / جرينتش)</option>
+            <option value="auto">تلقائي (حسب نظام الجهاز)</option>
+            <option value="2">GMT +02:00 (مصر / ليبيا)</option>
+            <option value="3">GMT +03:00 (مكة المكرمة / تركيا)</option>
+          </select>
+        </div>
+      </div>
 
-  <div class="prayers-row">
-    <div class="p-card" id="card-Fajr"><div class="p-name">الفجر</div><div class="p-subname">Fajr</div><div class="p-time" id="time-Fajr">05:25</div><div class="p-iqama">+20</div></div>
-    <div class="p-card" id="card-Dhuhr"><div class="p-name">الظهر</div><div class="p-subname">Dhuhr</div><div class="p-time" id="time-Dhuhr">12:30</div><div class="p-iqama">+15</div></div>
-    <div class="p-card" id="card-Asr"><div class="p-name">العصر</div><div class="p-subname">Asr</div><div class="p-time" id="time-Asr">15:30</div><div class="p-iqama">+15</div></div>
-    <div class="p-card" id="card-Maghrib"><div class="p-name">المغرب</div><div class="p-subname">Maghrib</div><div class="p-time" id="time-Maghrib">18:25</div><div class="p-iqama">+10</div></div>
-    <div class="p-card" id="card-Isha"><div class="p-name">العشاء</div><div class="p-subname">Isha</div><div class="p-time" id="time-Isha">19:45</div><div class="p-iqama">+15</div></div>
-  </div>
-
-  <div class="bottom-bar">
-    <div class="marquee-content" id="bottomMarquee">«وَأَنَّ الْمَسَاجِدَ لِلَّهِ فَلَا تَدْعُوا مَعَ اللَّهِ أَحَدًا» • اللَّهُمَّ افْتَحْ لَنَا أَبْوَابَ رَحْمَتِكَ • تَقَبَّلَ اللَّهُ مِنَّا وَمِنْكُمُ الصَّلَاةَ وَصَالِحَ الأَعْمَالِ</div>
-  </div>
-
-  <script>
-    // أوقات افتراضية مسبقة بالثواني لمنع ظهور النقط نهائياً
-    var prayerSecs = {
-      Fajr: 5 * 3600 + 25 * 60,
-      Sunrise: 6 * 3600 + 50 * 60,
-      Dhuhr: 12 * 3600 + 30 * 60,
-      Asr: 15 * 3600 + 30 * 60,
-      Maghrib: 18 * 3600 + 25 * 60,
-      Isha: 19 * 3600 + 45 * 60
-    };
-
-    var delays = { Fajr: 20, Dhuhr: 15, Asr: 15, Maghrib: 10, Isha: 15 };
-    var adhkar = [
-      "«سُبْحَانَ اللهِ وَبِحَمْدِهِ، سُبْحَانَ اللهِ الْعَظِيمِ»",
-      "«لا إِلَهَ إِلا اللَّهُ وَحْدَهُ لا شَرِيكَ لَهُ، لَهُ المُلْكُ وَلَهُ الحَمْدُ»",
-      "«أَسْتَغْفِرُ اللهَ الَّذِي لا إِلَهَ إِلا هُوَ الحَيَّ القَيُّومَ وَأَتُوبُ إِلَيْهِ»",
-      "«اللَّهُمَّ أَعِنِّي عَلَى ذِكْرِكَ وَشُكْرِكَ وَحُسْنِ عِبَادَتِكَ»",
-      "«لا حَوْلَ وَلا قُوَّةَ إِلا بِاللهِ الْعَلِيِّ الْعَظِيمِ»"
-    ];
-    var dhikrIdx = 0;
-
-    function formatTime(s) {
-      var h = Math.floor(s / 3600) % 24;
-      var m = Math.floor((s % 3600) / 60);
-      return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
-    }
-
-    function renderCards() {
-      document.getElementById('time-Fajr').innerText = formatTime(prayerSecs.Fajr);
-      document
+      <!-- خانات التعديل اليدوي بالدقائق لم
