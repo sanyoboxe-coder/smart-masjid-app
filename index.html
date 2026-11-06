@@ -175,7 +175,7 @@
           <label class="setup-label">نطاق التوقيت (GMT):</label>
           <select id="cfgTimezone" class="setup-select">
             <option value="1" selected>GMT +01:00 (المغرب / أوروبا الوسطى)</option>
-            <option value="0">GMT +00:00 (جرينتش الأصلي - توقيت رمضان بالمغرب)</option>
+            <option value="0">GMT +00:00 (توقيت رمضان بالمغرب / جرينتش)</option>
             <option value="auto">تلقائي (حسب توقيت الجهاز)</option>
             <option value="2">GMT +02:00 (مصر)</option>
             <option value="3">GMT +03:00 (مكة المكرمة)</option>
@@ -189,8 +189,8 @@
         <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; text-align: center;">
           <div><span style="font-size:0.8rem;">الفجر</span><input type="number" id="adjFajr" class="setup-input" style="padding:6px; text-align:center;" value="0"></div>
           <div><span style="font-size:0.8rem;">الظهر</span><input type="number" id="adjDhuhr" class="setup-input" style="padding:6px; text-align:center;" value="0"></div>
-          <div><span style="font-size:0.8rem;">العصر</span><input type="number" id="adjAsr" class="setup-input" style="padding:6px; text-align:center;" value="0"></div>
-          <div><span style="font-size:0.8rem;">المغرب</span><input type="number" id="adjMaghrib" class="setup-input" style="padding:6px; text-align:center;" value="0"></div>
+          <div><span style="font-size:0.8rem;">العصر</span><input type="number" id="adjAsr" class="setup-input" style="padding:6px; text-align:center;" value="1"></div>
+          <div><span style="font-size:0.8rem;">المغرب</span><input type="number" id="adjMaghrib" class="setup-input" style="padding:6px; text-align:center;" value="1"></div>
           <div><span style="font-size:0.8rem;">العشاء</span><input type="number" id="adjIsha" class="setup-input" style="padding:6px; text-align:center;" value="0"></div>
         </div>
       </div>
@@ -303,6 +303,16 @@
       en: { locale: 'en-US', fajr: "Fajr", dhuhr: "Dhuhr", asr: "Asr", maghrib: "Maghrib", isha: "Isha", sunrise: "Sunrise", jumua: "Jumuah", iqamaSub: "Iqama", alignRowsSub: "Straighten the rows", silencePhoneSub: "Turn off your mobile phones" }
     };
 
+    // القيمة الافتراضية تدمج دقيقة الأوقاف الاحتياطية للعصر والمغرب تلقائياً
+    var defaultAdjustments = { Fajr: 0, Dhuhr: 0, Asr: 1, Maghrib: 1, Isha: 0 };
+    var savedAdj = localStorage.getItem('sm_adjustments');
+    var currentAdj = savedAdj ? JSON.parse(savedAdj) : defaultAdjustments;
+
+    // التأكد من ضبط العصر والمغرب بدقيقة الزيادة إذا كانت القيمة القديمة 0
+    if (currentAdj.Asr === 0) currentAdj.Asr = 1;
+    if (currentAdj.Maghrib === 0) currentAdj.Maghrib = 1;
+    localStorage.setItem('sm_adjustments', JSON.stringify(currentAdj));
+
     var mConfig = {
       name: localStorage.getItem('sm_name') || "مسجد أبي هريرة - القنيطرة",
       city: localStorage.getItem('sm_city') || "القنيطرة، المغرب",
@@ -312,7 +322,7 @@
       lat: parseFloat(localStorage.getItem('sm_lat')) || 34.2610,
       lng: parseFloat(localStorage.getItem('sm_lng')) || -6.5802,
       theme: localStorage.getItem('sm_theme') || "theme-navy",
-      adjustments: JSON.parse(localStorage.getItem('sm_adjustments') || '{"Fajr":0,"Dhuhr":0,"Asr":0,"Maghrib":0,"Isha":0}')
+      adjustments: currentAdj
     };
 
     var delays = { Fajr: 20, Dhuhr: 15, Asr: 15, Maghrib: 10, Isha: 15 };
@@ -326,7 +336,7 @@
     ];
     var dhikrIdx = 0;
 
-    // محرك الحساب الداخلي الدقيق لمعيار وزارة الأوقاف المغربية (Fallback Offline Engine)
+    // محرك الحساب الاحتياطي الداخلي بمعيار وزارة الأوقاف المغربية
     function calcMoroccoOfflineTimes() {
       var d = new Date();
       var year = d.getFullYear();
@@ -350,274 +360,4 @@
       }
 
       var fajrM = noonMin - (ha(-19.0) * 4);
-      var riseM = noonMin - (ha(-0.833) * 4);
-      var dhuhrM = noonMin + 2; // دقيقتين احتياط بعد الزوال
-      var asrAlt = (180 / Math.PI) * Math.atan(1.0 / (1.0 + Math.tan((Math.PI / 180) * Math.abs(mConfig.lat - decl))));
-      var asrM = noonMin + (ha(asrAlt) * 4);
-      var maghribM = noonMin + (ha(-0.833) * 4) + 1; // دقيقة احتياط للمغرب
-      var ishaM = noonMin + (ha(-17.0) * 4);
-
-      prayerSecs.Fajr = Math.floor(((fajrM + 1440) % 1440) * 60) + (mConfig.adjustments.Fajr * 60);
-      prayerSecs.Sunrise = Math.floor(((riseM + 1440) % 1440) * 60);
-      prayerSecs.Dhuhr = Math.floor(((dhuhrM + 1440) % 1440) * 60) + (mConfig.adjustments.Dhuhr * 60);
-      prayerSecs.Asr = Math.floor(((asrM + 1440) % 1440) * 60) + (mConfig.adjustments.Asr * 60);
-      prayerSecs.Maghrib = Math.floor(((maghribM + 1440) % 1440) * 60) + (mConfig.adjustments.Maghrib * 60);
-      prayerSecs.Isha = Math.floor(((ishaM + 1440) % 1440) * 60) + (mConfig.adjustments.Isha * 60);
-
-      renderCards();
-    }
-
-    // جلب المواقيت الرسمية (نفس مصدر تقويم الأوقاف بالمغرب)
-    function fetchSalatFirstMoroccoTimes() {
-      var d = new Date();
-      var tz = mConfig.timezone === 'auto' ? 1 : parseInt(mConfig.timezone);
-      var url = "https://api.aladhan.com/v1/timings/" + Math.floor(d.getTime()/1000) + 
-                "?latitude=" + mConfig.lat + "&longitude=" + mConfig.lng + 
-                "&method=21&school=0"; // Method 21 = معيار وزارة الأوقاف المغربية الشامل
-
-      fetch(url)
-        .then(function(res) { return res.json(); })
-        .then(function(data) {
-          if (data && data.data && data.data.timings) {
-            var t = data.data.timings;
-            function toSec(str) {
-              var p = str.split(':');
-              return parseInt(p[0]) * 3600 + parseInt(p[1]) * 60;
-            }
-            prayerSecs.Fajr = toSec(t.Fajr) + (mConfig.adjustments.Fajr * 60);
-            prayerSecs.Sunrise = toSec(t.Sunrise);
-            prayerSecs.Dhuhr = toSec(t.Dhuhr) + (mConfig.adjustments.Dhuhr * 60);
-            prayerSecs.Asr = toSec(t.Asr) + (mConfig.adjustments.Asr * 60);
-            prayerSecs.Maghrib = toSec(t.Maghrib) + (mConfig.adjustments.Maghrib * 60);
-            prayerSecs.Isha = toSec(t.Isha) + (mConfig.adjustments.Isha * 60);
-
-            localStorage.setItem('sm_cached_timings', JSON.stringify(prayerSecs));
-            renderCards();
-          } else {
-            calcMoroccoOfflineTimes();
-          }
-        })
-        .catch(function(err) {
-          var cached = localStorage.getItem('sm_cached_timings');
-          if (cached) {
-            prayerSecs = JSON.parse(cached);
-            renderCards();
-          } else {
-            calcMoroccoOfflineTimes();
-          }
-        });
-    }
-
-    function formatTime(s) {
-      var h = Math.floor(s / 3600) % 24;
-      var m = Math.floor((s % 3600) / 60);
-      return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
-    }
-
-    function renderCards() {
-      document.getElementById('time-Fajr').innerText = formatTime(prayerSecs.Fajr);
-      document.getElementById('dispSunrise').innerText = formatTime(prayerSecs.Sunrise);
-      document.getElementById('time-Dhuhr').innerText = formatTime(prayerSecs.Dhuhr);
-      document.getElementById('time-Asr').innerText = formatTime(prayerSecs.Asr);
-      document.getElementById('time-Maghrib').innerText = formatTime(prayerSecs.Maghrib);
-      document.getElementById('time-Isha').innerText = formatTime(prayerSecs.Isha);
-
-      document.getElementById('iqama-Fajr').innerText = '+' + delays.Fajr;
-      document.getElementById('iqama-Dhuhr').innerText = '+' + delays.Dhuhr;
-      document.getElementById('iqama-Asr').innerText = '+' + delays.Asr;
-      document.getElementById('iqama-Maghrib').innerText = '+' + delays.Maghrib;
-      document.getElementById('iqama-Isha').innerText = '+' + delays.Isha;
-    }
-
-    function getHijriDate(offsetDays) {
-      var d = new Date();
-      d.setDate(d.getDate() + offsetDays);
-      try {
-        var options = { day: 'numeric', month: 'long', year: 'numeric' };
-        var hijriFormatter = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura', options);
-        return hijriFormatter.format(d) + ' هـ';
-      } catch (e) { return ""; }
-    }
-
-    function getGregorianDate(langKey) {
-      var d = new Date();
-      var t = TRANSLATIONS[langKey] || TRANSLATIONS.ar;
-      try {
-        var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        var gregFormatter = new Intl.DateTimeFormat(t.locale, options);
-        return gregFormatter.format(d);
-      } catch (e) { return d.toLocaleDateString(); }
-    }
-
-    function tick() {
-      var d = new Date();
-      var h = d.getHours();
-      var m = d.getMinutes();
-      var s = d.getSeconds();
-
-      document.getElementById('liveClock').innerText = 
-        (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
-
-      document.getElementById('liveHijriDate').innerText = getHijriDate(mConfig.hijriOffset);
-      document.getElementById('liveGregDate').innerText = getGregorianDate(mConfig.lang);
-
-      var nowSec = h * 3600 + m * 60 + s;
-      var pList = [
-        { id: "Fajr", name: "الفجر", adhan: prayerSecs.Fajr, iq: delays.Fajr * 60 },
-        { id: "Dhuhr", name: "الظهر", adhan: prayerSecs.Dhuhr, iq: delays.Dhuhr * 60 },
-        { id: "Asr", name: "العصر", adhan: prayerSecs.Asr, iq: delays.Asr * 60 },
-        { id: "Maghrib", name: "المغرب", adhan: prayerSecs.Maghrib, iq: delays.Maghrib * 60 },
-        { id: "Isha", name: "العشاء", adhan: prayerSecs.Isha, iq: delays.Isha * 60 }
-      ];
-
-      var modal = document.getElementById('fsModal');
-      var mHead = document.getElementById('fsHead');
-      var mTimer = document.getElementById('fsTimer');
-      var isIq = false, isPray = false, activeP = null, rem = 0;
-
-      for (var i = 0; i < pList.length; i++) {
-        var p = pList[i];
-        var iqEnd = p.adhan + p.iq;
-        if (nowSec >= p.adhan && nowSec < iqEnd) {
-          isIq = true; activeP = p; rem = iqEnd - nowSec; break;
-        }
-        if (nowSec >= iqEnd && nowSec < (iqEnd + 600)) {
-          isPray = true; activeP = p; break;
-        }
-      }
-
-      if (isIq) {
-        modal.style.display = 'flex';
-        mHead.innerText = 'إِقَامَةُ صَلَاةِ ' + activeP.name;
-        mTimer.style.display = 'block';
-        var mm = Math.floor(rem / 60);
-        var ss = rem % 60;
-        mTimer.innerText = (mm < 10 ? '0' : '') + mm + ':' + (ss < 10 ? '0' : '') + ss;
-      } else if (isPray) {
-        modal.style.display = 'flex';
-        mHead.innerText = 'أَقِيمُوا الصَّفَّ';
-        mTimer.style.display = 'none';
-      } else {
-        modal.style.display = 'none';
-      }
-
-      if (!isIq && !isPray) {
-        var nextP = null;
-        for (var j = 0; j < pList.length; j++) {
-          if (pList[j].adhan > nowSec) {
-            nextP = pList[j];
-            rem = nextP.adhan - nowSec;
-            break;
-          }
-        }
-        
-        if (!nextP) {
-          nextP = pList[0];
-          rem = (86400 - nowSec) + pList[0].adhan;
-        }
-
-        for (var k = 0; k < pList.length; k++) {
-          var card = document.getElementById('card-' + pList[k].id);
-          if (card) card.className = 'p-card';
-        }
-        var actCard = document.getElementById('card-' + nextP.id);
-        if (actCard) actCard.className = 'p-card active-p';
-
-        document.getElementById('countdownLabel').innerText = nextP.name + ' بعد';
-        var cBox = document.getElementById('countdownBox');
-        if (rem <= 60) {
-          cBox.className = 'countdown-bar green-mode';
-        } else {
-          cBox.className = 'countdown-bar';
-        }
-
-        var rh = Math.floor(rem / 3600);
-        var rm = Math.floor((rem % 3600) / 60);
-        var rs = rem % 60;
-        document.getElementById('countdownVal').innerText = 
-          (rh < 10 ? '0' : '') + rh + ':' + (rm < 10 ? '0' : '') + rm + ':' + (rs < 10 ? '0' : '') + rs;
-      }
-    }
-
-    function openPairingModal() {
-      var qrModal = document.getElementById('qrPairModal');
-      var qrImg = document.getElementById('qrImg');
-      var currentUrl = window.location.href.split('index.html')[0].split('#')[0].split('?')[0];
-      if (!currentUrl.endsWith('/')) currentUrl += '/';
-      var adminTarget = currentUrl + 'admin.html?token=' + encodeURIComponent(mConfig.pairingToken);
-      qrImg.src = "https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=" + encodeURIComponent(adminTarget);
-      qrModal.style.display = 'flex';
-    }
-
-    function openSetupModal() {
-      document.getElementById('cfgMasjidName').value = mConfig.name;
-      document.getElementById('cfgCityName').value = mConfig.city;
-      document.getElementById('cfgLat').value = mConfig.lat;
-      document.getElementById('cfgLng').value = mConfig.lng;
-      document.getElementById('cfgTimezone').value = mConfig.timezone;
-      document.getElementById('adjFajr').value = mConfig.adjustments.Fajr;
-      document.getElementById('adjDhuhr').value = mConfig.adjustments.Dhuhr;
-      document.getElementById('adjAsr').value = mConfig.adjustments.Asr;
-      document.getElementById('adjMaghrib').value = mConfig.adjustments.Maghrib;
-      document.getElementById('adjIsha').value = mConfig.adjustments.Isha;
-      document.getElementById('setupModal').style.display = 'flex';
-    }
-
-    function saveMosqueConfig() {
-      mConfig.name = document.getElementById('cfgMasjidName').value.trim();
-      mConfig.city = document.getElementById('cfgCityName').value.trim();
-      mConfig.timezone = document.getElementById('cfgTimezone').value;
-      mConfig.lat = parseFloat(document.getElementById('cfgLat').value);
-      mConfig.lng = parseFloat(document.getElementById('cfgLng').value);
-      mConfig.adjustments = {
-        Fajr: parseInt(document.getElementById('adjFajr').value) || 0,
-        Dhuhr: parseInt(document.getElementById('adjDhuhr').value) || 0,
-        Asr: parseInt(document.getElementById('adjAsr').value) || 0,
-        Maghrib: parseInt(document.getElementById('adjMaghrib').value) || 0,
-        Isha: parseInt(document.getElementById('adjIsha').value) || 0
-      };
-
-      localStorage.setItem('sm_name', mConfig.name);
-      localStorage.setItem('sm_city', mConfig.city);
-      localStorage.setItem('sm_tz', mConfig.timezone);
-      localStorage.setItem('sm_lat', mConfig.lat);
-      localStorage.setItem('sm_lng', mConfig.lng);
-      localStorage.setItem('sm_adjustments', JSON.stringify(mConfig.adjustments));
-
-      document.getElementById('setupModal').style.display = 'none';
-      document.getElementById('dispMasjidTitle').innerText = mConfig.name;
-      document.getElementById('dispCityBadge').innerText = "📍 " + mConfig.city;
-      fetchSalatFirstMoroccoTimes();
-    }
-
-    function fetchGPS() {
-      if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(function(pos) {
-          document.getElementById('cfgLat').value = pos.coords.latitude.toFixed(4);
-          document.getElementById('cfgLng').value = pos.coords.longitude.toFixed(4);
-          alert('تم التقاط الإحداثيات بنجاح عبر GPS!');
-        });
-      }
-    }
-
-    setInterval(function() {
-      dhikrIdx = (dhikrIdx + 1) % adhkar.length;
-      document.getElementById('dhikrText').innerText = adhkar[dhikrIdx];
-    }, 7000);
-
-    // تحديث المواقيت أوتوماتيكياً كل يوم عند منتصف الليل
-    setInterval(function() {
-      var d = new Date();
-      if (d.getHours() === 0 && d.getMinutes() === 1 && d.getSeconds() <= 2) {
-        fetchSalatFirstMoroccoTimes();
-      }
-    }, 1000);
-
-    document.getElementById('dispMasjidTitle').innerText = mConfig.name;
-    document.getElementById('dispCityBadge').innerText = "📍 " + mConfig.city;
-    fetchSalatFirstMoroccoTimes();
-    setInterval(tick, 1000);
-    tick();
-  </script>
-</body>
-</html>
+      var riseM = noonMin - (ha(-0.
