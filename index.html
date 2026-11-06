@@ -3,51 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Smart Masjid Global</title>
+  <title>Smart Masjid TV</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { width: 100%; height: 100%; overflow: hidden; background: #020617; }
     body {
       color: #fff;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: system-ui, -apple-system, sans-serif;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       padding: 15px 25px;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      transition: background 0.4s ease-in-out;
+      background: radial-gradient(circle at center, #1e3a8a 0%, #0a1128 70%, #020617 100%);
     }
-
-    body.theme-navy { background: radial-gradient(circle at center, #1e3a8a 0%, #0a1128 70%, #020617 100%); }
-    body.theme-emerald { background: radial-gradient(circle at center, #064e3b 0%, #022c22 70%, #01140e 100%); }
-    body.theme-charcoal { background: radial-gradient(circle at center, #1e293b 0%, #0f172a 70%, #020617 100%); }
-
-    .setup-overlay {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      background: rgba(2, 6, 23, 0.98); z-index: 100000;
-      display: none; justify-content: center; align-items: center; padding: 20px;
-    }
-    .setup-box {
-      background: #0f172a; border: 2px solid #38bdf8; border-radius: 20px;
-      padding: 25px 35px; width: 100%; max-width: 640px; text-align: right;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.8);
-      max-height: 90vh; overflow-y: auto;
-    }
-    .setup-title { font-size: 1.5rem; font-weight: 900; color: #38bdf8; text-align: center; margin-bottom: 15px; }
-    .setup-label { font-size: 0.95rem; color: #94a3b8; margin-top: 10px; margin-bottom: 5px; display: block; font-weight: 700; }
-    .setup-input, .setup-select {
-      width: 100%; padding: 11px; border-radius: 10px; border: 1px solid #334155;
-      background: #1e293b; color: #fff; font-size: 1rem; outline: none;
-    }
-    .setup-row { display: flex; gap: 10px; margin-top: 5px; }
-    .btn-act {
-      width: 100%; padding: 12px; border: none; border-radius: 10px; font-size: 1.05rem;
-      font-weight: 900; cursor: pointer; margin-top: 10px; transition: 0.2s;
-    }
-    .btn-save { background: #16a34a; color: #fff; margin-top: 15px; }
-    .btn-gps { background: #0284c7; color: #fff; }
 
     .top-bar { 
       background: rgba(15, 23, 42, 0.85); padding: 8px 25px; border-radius: 14px;
@@ -55,11 +23,6 @@
       font-size: 1.25rem; font-weight: 700; border: 1px solid rgba(255,255,255,0.1);
     }
     .top-tools { display: flex; align-items: center; gap: 12px; }
-    .btn-qr-pair {
-      background: #0284c7; color: #fff; border: none; padding: 6px 14px; border-radius: 8px;
-      font-size: 0.95rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px;
-    }
-    .settings-trigger { cursor: pointer; opacity: 0.8; font-size: 1.3rem; }
 
     .center-section { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 0 10px; }
     .side-box { 
@@ -76,7 +39,7 @@
     }
     .main-clock { font-size: 4.8rem; font-weight: 900; font-family: monospace; line-height: 1; letter-spacing: 2px; }
     .hijri-date { font-size: 1.45rem; font-weight: 900; color: #facc15; margin-top: 6px; }
-    .greg-date { font-size: 1.15rem; font-weight: 700; color: #93c5fd; margin-top: 2px; direction: ltr; }
+    .greg-date { font-size: 1.15rem; font-weight: 700; color: #93c5fd; margin-top: 2px; }
 
     .middle-info-bar { display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 0 10px; }
     .dhikr-box { 
@@ -127,93 +90,8 @@
     .modal-sub { font-size: 2rem; font-weight: 900; color: #ef4444; margin-top: 25px; background: rgba(239,68,68,0.15); padding: 8px 25px; border-radius: 14px; border: 1px solid #ef4444; }
   </style>
 </head>
-<body class="theme-navy">
+<body>
 
-  <!-- نافذة الباركود -->
-  <div class="setup-overlay" id="qrPairModal">
-    <div class="setup-box" style="text-align: center; max-width: 480px;">
-      <div class="setup-title">📱 ربط هاتف الإمام الحصري</div>
-      <p style="color: #94a3b8; font-size: 1rem; margin-bottom: 15px;">امسح هذا الرمز بكاميرا هاتفك لتصبح المسؤول المعتمد الوحيد لهذا المسجد:</p>
-      <div style="background: #fff; padding: 15px; border-radius: 16px; display: inline-block; margin-bottom: 15px;">
-        <img id="qrImg" src="" alt="QR Pairing" style="width: 220px; height: 220px; display: block;">
-      </div>
-      <button type="button" class="btn-act btn-gps" onclick="document.getElementById('qrPairModal').style.display='none'">إغلاق</button>
-    </div>
-  </div>
-
-  <!-- نافذة التخصيص العالمية -->
-  <div class="setup-overlay" id="setupModal">
-    <div class="setup-box">
-      <div class="setup-title">⚙️ تخصيص شاشة المسجد الدولية</div>
-      
-      <label class="setup-label">الهيئة الإسلامية المعتمدة لحساب المواقيت:</label>
-      <select id="cfgMethod" class="setup-select">
-        <option value="21" selected>المغرب - وزارة الأوقاف والشؤون الإسلامية</option>
-        <option value="4">السعودية والخليج - جامعة أم القرى (مكة المكرمة)</option>
-        <option value="5">مصر والدول العربية - الهيئة العامة المصرية للمساحة</option>
-        <option value="3">عالمي / أوروبا وأمريكا - رابطة العالم الإسلامي (MWL)</option>
-        <option value="13">تركيا وأوروبا - رئاسة الشؤون الدينية التركية (Diyanet)</option>
-        <option value="2">أمريكا الشمالية - الجمعية الإسلامية لأمريكا الشمالية (ISNA)</option>
-        <option value="1">جامعة العلوم الإسلامية بكراتشي (باكستان/الهند)</option>
-      </select>
-
-      <div class="setup-row">
-        <div style="flex:1;">
-          <label class="setup-label">لغة العرض:</label>
-          <select id="cfgLang" class="setup-select">
-            <option value="ar">العربية (Arabic)</option>
-            <option value="fr" selected>Français (الفرنسية)</option>
-            <option value="en">English (الإنجليزية)</option>
-            <option value="tr">Türkçe (التركية)</option>
-          </select>
-        </div>
-        <div style="flex:1;">
-          <label class="setup-label">نطاق التوقيت (GMT):</label>
-          <select id="cfgTimezone" class="setup-select">
-            <option value="auto">تلقائي (حسب نظام الجهاز)</option>
-            <option value="0">GMT +00:00 (جرينتش / لندن)</option>
-            <option value="1" selected>GMT +01:00 (المغرب / الجزائر / فرنسا)</option>
-            <option value="2">GMT +02:00 (مصر / ليبيا)</option>
-            <option value="3">GMT +03:00 (مكة المكرمة / تركيا / العراق)</option>
-            <option value="4">GMT +04:00 (الإمارات / عمان)</option>
-          </select>
-        </div>
-      </div>
-
-      <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; margin-top: 10px; border: 1px solid #334155;">
-        <label class="setup-label" style="margin-top:0; color:#38bdf8;">⏱️ تعديل الدقائق (+/-) حسب ورقة المسجد:</label>
-        <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; text-align: center;">
-          <div><span style="font-size:0.8rem;">الفجر</span><input type="number" id="adjFajr" class="setup-input" style="padding:6px; text-align:center;" value="0"></div>
-          <div><span style="font-size:0.8rem;">الظهر</span><input type="number" id="adjDhuhr" class="setup-input" style="padding:6px; text-align:center;" value="0"></div>
-          <div><span style="font-size:0.8rem;">العصر</span><input type="number" id="adjAsr" class="setup-input" style="padding:6px; text-align:center;" value="0"></div>
-          <div><span style="font-size:0.8rem;">المغرب</span><input type="number" id="adjMaghrib" class="setup-input" style="padding:6px; text-align:center;" value="0"></div>
-          <div><span style="font-size:0.8rem;">العشاء</span><input type="number" id="adjIsha" class="setup-input" style="padding:6px; text-align:center;" value="0"></div>
-        </div>
-      </div>
-
-      <label class="setup-label">اسم المسجد والحي:</label>
-      <input type="text" id="cfgMasjidName" class="setup-input" placeholder="مسجد أبي هريرة">
-
-      <label class="setup-label">المدينة والدولة:</label>
-      <input type="text" id="cfgCityName" class="setup-input" placeholder="القنيطرة، المغرب">
-
-      <div class="setup-row">
-        <div style="flex:1;">
-          <label class="setup-label">خط العرض (Lat):</label>
-          <input type="number" step="0.0001" id="cfgLat" class="setup-input" placeholder="34.2610">
-        </div>
-        <div style="flex:1;">
-          <label class="setup-label">خط الطول (Lng):</label>
-          <input type="number" step="0.0001" id="cfgLng" class="setup-input" placeholder="-6.5802">
-        </div>
-      </div>
-
-      <button type="button" class="btn-act btn-gps" onclick="fetchGPS()">📡 تحديد الإحداثيات تلقائياً عبر GPS</button>
-      <button type="button" class="btn-act btn-save" onclick="saveMosqueConfig()">💾 حفظ وبدء التشغيل</button>
-    </div>
-  </div>
-
-  <!-- الشاشة الكبرى للإقامة -->
   <div class="fullscreen-modal" id="fsModal">
     <div class="modal-head" id="fsHead">إِقَامَةُ الصَّلَاةِ</div>
     <div class="modal-timer" id="fsTimer" style="display:none;">00:00</div>
@@ -221,67 +99,58 @@
     <div class="modal-sub">📴 يُرْجَى إِغْلَاقُ الْهَوَاتِفِ النَّقَّالَةِ جَزَاكُمُ اللهُ خَيْرًا</div>
   </div>
 
-  <!-- الشريط العلوي -->
   <div class="top-bar">
     <div id="dispMasjidTitle">🕌 مسجد أبي هريرة - القنيطرة</div>
     <div class="top-tools">
-      <button type="button" class="btn-qr-pair" onclick="openPairingModal()">📱 هاتف الإمام</button>
       <div id="dispCityBadge" style="color: #38bdf8;">📍 القنيطرة، المغرب</div>
-      <div class="settings-trigger" onclick="openSetupModal()" title="إعدادات الشاشة">⚙️</div>
     </div>
   </div>
 
-  <!-- القسم الأوسط -->
   <div class="center-section">
     <div class="side-box">
       <div class="side-title">الجمعة</div>
       <div class="side-time" id="dispJumua">12:30</div>
     </div>
     <div class="clock-card">
-      <div class="main-clock" id="liveClock">--:--:--</div>
+      <div class="main-clock" id="liveClock">00:00:00</div>
       <div class="hijri-date" id="liveHijriDate">-- هـ</div>
       <div class="greg-date" id="liveGregDate">--</div>
     </div>
     <div class="side-box">
       <div class="side-title">الشروق</div>
-      <div class="side-time" id="dispSunrise">--:--</div>
+      <div class="side-time" id="dispSunrise">06:50</div>
     </div>
   </div>
 
-  <!-- شريط الأذكار والتنازلي -->
   <div class="middle-info-bar">
     <div class="dhikr-box" id="dhikrText">«سُبْحَانَ اللهِ وَبِحَمْدِهِ، سُبْحَانَ اللهِ الْعَظِيمِ»</div>
-    <div class="countdown-bar" id="countdownBox"><span>⏳</span><span id="countdownLabel">الصلاة القادمة</span><span class="count-val" id="countdownVal">--:--:--</span></div>
+    <div class="countdown-bar" id="countdownBox"><span>⏳</span><span id="countdownLabel">الصلاة القادمة</span><span class="count-val" id="countdownVal">00:00:00</span></div>
   </div>
 
-  <!-- الصلوات الخمس -->
   <div class="prayers-row">
-    <div class="p-card" id="card-Fajr"><div class="p-name">الفجر</div><div class="p-subname">Fajr</div><div class="p-time" id="time-Fajr">--:--</div><div class="p-iqama" id="iqama-Fajr">+20</div></div>
-    <div class="p-card" id="card-Dhuhr"><div class="p-name">الظهر</div><div class="p-subname">Dhuhr</div><div class="p-time" id="time-Dhuhr">--:--</div><div class="p-iqama" id="iqama-Dhuhr">+15</div></div>
-    <div class="p-card" id="card-Asr"><div class="p-name">العصر</div><div class="p-subname">Asr</div><div class="p-time" id="time-Asr">--:--</div><div class="p-iqama" id="iqama-Asr">+15</div></div>
-    <div class="p-card" id="card-Maghrib"><div class="p-name">المغرب</div><div class="p-subname">Maghrib</div><div class="p-time" id="time-Maghrib">--:--</div><div class="p-iqama" id="iqama-Maghrib">+10</div></div>
-    <div class="p-card" id="card-Isha"><div class="p-name">العشاء</div><div class="p-subname">Isha</div><div class="p-time" id="time-Isha">--:--</div><div class="p-iqama" id="iqama-Isha">+15</div></div>
+    <div class="p-card" id="card-Fajr"><div class="p-name">الفجر</div><div class="p-subname">Fajr</div><div class="p-time" id="time-Fajr">05:25</div><div class="p-iqama">+20</div></div>
+    <div class="p-card" id="card-Dhuhr"><div class="p-name">الظهر</div><div class="p-subname">Dhuhr</div><div class="p-time" id="time-Dhuhr">12:30</div><div class="p-iqama">+15</div></div>
+    <div class="p-card" id="card-Asr"><div class="p-name">العصر</div><div class="p-subname">Asr</div><div class="p-time" id="time-Asr">15:30</div><div class="p-iqama">+15</div></div>
+    <div class="p-card" id="card-Maghrib"><div class="p-name">المغرب</div><div class="p-subname">Maghrib</div><div class="p-time" id="time-Maghrib">18:25</div><div class="p-iqama">+10</div></div>
+    <div class="p-card" id="card-Isha"><div class="p-name">العشاء</div><div class="p-subname">Isha</div><div class="p-time" id="time-Isha">19:45</div><div class="p-iqama">+15</div></div>
   </div>
 
-  <!-- الشريط الإخباري بالأسفل -->
   <div class="bottom-bar">
     <div class="marquee-content" id="bottomMarquee">«وَأَنَّ الْمَسَاجِدَ لِلَّهِ فَلَا تَدْعُوا مَعَ اللَّهِ أَحَدًا» • اللَّهُمَّ افْتَحْ لَنَا أَبْوَابَ رَحْمَتِكَ • تَقَبَّلَ اللَّهُ مِنَّا وَمِنْكُمُ الصَّلَاةَ وَصَالِحَ الأَعْمَالِ</div>
   </div>
 
   <script>
-    var mConfig = {
-      name: localStorage.getItem('sm_name') || "مسجد أبي هريرة - القنيطرة",
-      city: localStorage.getItem('sm_city') || "القنيطرة، المغرب",
-      lang: localStorage.getItem('sm_lang') || "fr",
-      method: localStorage.getItem('sm_method') || "21",
-      timezone: localStorage.getItem('sm_tz') || "1",
-      lat: parseFloat(localStorage.getItem('sm_lat')) || 34.2610,
-      lng: parseFloat(localStorage.getItem('sm_lng')) || -6.5802,
-      adjustments: JSON.parse(localStorage.getItem('sm_adjustments') || '{"Fajr":0,"Dhuhr":0,"Asr":0,"Maghrib":0,"Isha":0}')
+    // أوقات افتراضية مسبقة بالثواني لمنع ظهور النقط نهائياً
+    var prayerSecs = {
+      Fajr: 5 * 3600 + 25 * 60,
+      Sunrise: 6 * 3600 + 50 * 60,
+      Dhuhr: 12 * 3600 + 30 * 60,
+      Asr: 15 * 3600 + 30 * 60,
+      Maghrib: 18 * 3600 + 25 * 60,
+      Isha: 19 * 3600 + 45 * 60
     };
 
     var delays = { Fajr: 20, Dhuhr: 15, Asr: 15, Maghrib: 10, Isha: 15 };
-    var prayerSecs = { Fajr: 0, Sunrise: 0, Dhuhr: 0, Asr: 0, Maghrib: 0, Isha: 0 };
     var adhkar = [
       "«سُبْحَانَ اللهِ وَبِحَمْدِهِ، سُبْحَانَ اللهِ الْعَظِيمِ»",
       "«لا إِلَهَ إِلا اللَّهُ وَحْدَهُ لا شَرِيكَ لَهُ، لَهُ المُلْكُ وَلَهُ الحَمْدُ»",
@@ -291,44 +160,7 @@
     ];
     var dhikrIdx = 0;
 
-    // جلب المواقيت بدقة حسب الهيئة والمدينة المختارة
-    function fetchGlobalPrayerTimes() {
-      var d = new Date();
-      var url = "https://api.aladhan.com/v1/timings/" + Math.floor(d.getTime()/1000) + 
-                "?latitude=" + mConfig.lat + "&longitude=" + mConfig.lng + 
-                "&method=" + mConfig.method;
-
-      fetch(url)
-        .then(function(res) { return res.json(); })
-        .then(function(data) {
-          if (data && data.data && data.data.timings) {
-            var t = data.data.timings;
-            function toSec(str) {
-              var p = str.split(':');
-              return parseInt(p[0]) * 3600 + parseInt(p[1]) * 60;
-            }
-            prayerSecs.Fajr = toSec(t.Fajr) + ((mConfig.adjustments.Fajr || 0) * 60);
-            prayerSecs.Sunrise = toSec(t.Sunrise);
-            prayerSecs.Dhuhr = toSec(t.Dhuhr) + ((mConfig.adjustments.Dhuhr || 0) * 60);
-            prayerSecs.Asr = toSec(t.Asr) + ((mConfig.adjustments.Asr || 0) * 60);
-            prayerSecs.Maghrib = toSec(t.Maghrib) + ((mConfig.adjustments.Maghrib || 0) * 60);
-            prayerSecs.Isha = toSec(t.Isha) + ((mConfig.adjustments.Isha || 0) * 60);
-
-            localStorage.setItem('sm_cached_timings', JSON.stringify(prayerSecs));
-            renderCards();
-          }
-        })
-        .catch(function() {
-          var cached = localStorage.getItem('sm_cached_timings');
-          if (cached) {
-            prayerSecs = JSON.parse(cached);
-            renderCards();
-          }
-        });
-    }
-
     function formatTime(s) {
-      if (!s || s === 0) return "--:--";
       var h = Math.floor(s / 3600) % 24;
       var m = Math.floor((s % 3600) / 60);
       return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
@@ -336,132 +168,4 @@
 
     function renderCards() {
       document.getElementById('time-Fajr').innerText = formatTime(prayerSecs.Fajr);
-      document.getElementById('dispSunrise').innerText = formatTime(prayerSecs.Sunrise);
-      document.getElementById('time-Dhuhr').innerText = formatTime(prayerSecs.Dhuhr);
-      document.getElementById('time-Asr').innerText = formatTime(prayerSecs.Asr);
-      document.getElementById('time-Maghrib').innerText = formatTime(prayerSecs.Maghrib);
-      document.getElementById('time-Isha').innerText = formatTime(prayerSecs.Isha);
-    }
-
-    function tick() {
-      var d = new Date();
-      var h = d.getHours();
-      var m = d.getMinutes();
-      var s = d.getSeconds();
-
-      document.getElementById('liveClock').innerText = 
-        (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
-
-      try {
-        var hijri = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura', { day: 'numeric', month: 'long', year: 'numeric' }).format(d);
-        document.getElementById('liveHijriDate').innerText = hijri + ' هـ';
-      } catch(e) {}
-
-      try {
-        var greg = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }).format(d);
-        document.getElementById('liveGregDate').innerText = greg;
-      } catch(e) {}
-
-      if (prayerSecs.Fajr === 0) return;
-
-      var nowSec = h * 3600 + m * 60 + s;
-      var pList = [
-        { id: "Fajr", name: "الفجر", adhan: prayerSecs.Fajr, iq: delays.Fajr * 60 },
-        { id: "Dhuhr", name: "الظهر", adhan: prayerSecs.Dhuhr, iq: delays.Dhuhr * 60 },
-        { id: "Asr", name: "العصر", adhan: prayerSecs.Asr, iq: delays.Asr * 60 },
-        { id: "Maghrib", name: "المغرب", adhan: prayerSecs.Maghrib, iq: delays.Maghrib * 60 },
-        { id: "Isha", name: "العشاء", adhan: prayerSecs.Isha, iq: delays.Isha * 60 }
-      ];
-
-      var modal = document.getElementById('fsModal');
-      var isIq = false, isPray = false, activeP = null, rem = 0;
-
-      for (var i = 0; i < pList.length; i++) {
-        var p = pList[i];
-        var iqEnd = p.adhan + p.iq;
-        if (nowSec >= p.adhan && nowSec < iqEnd) {
-          isIq = true; activeP = p; rem = iqEnd - nowSec; break;
-        }
-        if (nowSec >= iqEnd && nowSec < (iqEnd + 600)) {
-          isPray = true; activeP = p; break;
-        }
-      }
-
-      if (isIq) {
-        modal.style.display = 'flex';
-        document.getElementById('fsHead').innerText = 'إِقَامَةُ صَلَاةِ ' + activeP.name;
-        document.getElementById('fsTimer').style.display = 'block';
-        var mm = Math.floor(rem / 60);
-        var ss = rem % 60;
-        document.getElementById('fsTimer').innerText = (mm < 10 ? '0' : '') + mm + ':' + (ss < 10 ? '0' : '') + ss;
-      } else if (isPray) {
-        modal.style.display = 'flex';
-        document.getElementById('fsHead').innerText = 'أَقِيمُوا الصَّفَّ';
-        document.getElementById('fsTimer').style.display = 'none';
-      } else {
-        modal.style.display = 'none';
-      }
-
-      if (!isIq && !isPray) {
-        var nextP = null;
-        for (var j = 0; j < pList.length; j++) {
-          if (pList[j].adhan > nowSec) {
-            nextP = pList[j];
-            rem = nextP.adhan - nowSec;
-            break;
-          }
-        }
-        if (!nextP) {
-          nextP = pList[0];
-          rem = (86400 - nowSec) + pList[0].adhan;
-        }
-
-        for (var k = 0; k < pList.length; k++) {
-          var card = document.getElementById('card-' + pList[k].id);
-          if (card) card.className = 'p-card';
-        }
-        var actCard = document.getElementById('card-' + nextP.id);
-        if (actCard) actCard.className = 'p-card active-p';
-
-        document.getElementById('countdownLabel').innerText = nextP.name + ' بعد';
-        var rh = Math.floor(rem / 3600);
-        var rm = Math.floor((rem % 3600) / 60);
-        var rs = rem % 60;
-        document.getElementById('countdownVal').innerText = 
-          (rh < 10 ? '0' : '') + rh + ':' + (rm < 10 ? '0' : '') + rm + ':' + (rs < 10 ? '0' : '') + rs;
-      }
-    }
-
-    function openPairingModal() {
-      var currentUrl = window.location.href.split('index.html')[0].split('#')[0].split('?')[0];
-      if (!currentUrl.endsWith('/')) currentUrl += '/';
-      var adminTarget = currentUrl + 'admin.html?token=' + encodeURIComponent(localStorage.getItem('sm_pairing_token') || 'KEY_DEFAULT');
-      document.getElementById('qrImg').src = "https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=" + encodeURIComponent(adminTarget);
-      document.getElementById('qrPairModal').style.display = 'flex';
-    }
-
-    function openSetupModal() {
-      document.getElementById('cfgMasjidName').value = mConfig.name;
-      document.getElementById('cfgCityName').value = mConfig.city;
-      document.getElementById('cfgMethod').value = mConfig.method;
-      document.getElementById('cfgLat').value = mConfig.lat;
-      document.getElementById('cfgLng').value = mConfig.lng;
-      document.getElementById('cfgTimezone').value = mConfig.timezone;
-      document.getElementById('adjFajr').value = mConfig.adjustments.Fajr || 0;
-      document.getElementById('adjDhuhr').value = mConfig.adjustments.Dhuhr || 0;
-      document.getElementById('adjAsr').value = mConfig.adjustments.Asr || 0;
-      document.getElementById('adjMaghrib').value = mConfig.adjustments.Maghrib || 0;
-      document.getElementById('adjIsha').value = mConfig.adjustments.Isha || 0;
-      document.getElementById('setupModal').style.display = 'flex';
-    }
-
-    function saveMosqueConfig() {
-      mConfig.name = document.getElementById('cfgMasjidName').value.trim();
-      mConfig.city = document.getElementById('cfgCityName').value.trim();
-      mConfig.method = document.getElementById('cfgMethod').value;
-      mConfig.timezone = document.getElementById('cfgTimezone').value;
-      mConfig.lat = parseFloat(document.getElementById('cfgLat').value) || 34.2610;
-      mConfig.lng = parseFloat(document.getElementById('cfgLng').value) || -6.5802;
-      mConfig.adjustments = {
-        Fajr: parseInt(document.getElementById('adjFajr').value) || 0,
-        Dhuhr:
+      document
